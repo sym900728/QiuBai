@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="45dp"
+     >
+
+    <RelativeLayout
+        android:id="@+id/rel_weather_title_left"
+        android:layout_width="60dp"
+        android:layout_height="45dp"
+        android:background="@drawable/main_rel_bg"
+         >
+
+        <ImageView
+            android:id="@+id/title_weather_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/pt_title_back" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_weather_title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp"
+        android:layout_toRightOf="@id/rel_weather_title_left" >
+
+        <TextView
+            android:id="@+id/title_city_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@android:color/white"
+            android:textSize="17sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_weather_title_share"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/main_rel_bg" >
+
+        <ImageView
+            android:id="@+id/title_menu_right"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/biz_special_share_icon" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_weather_title_location"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/rel_weather_title_share"
+        android:background="@drawable/main_rel_bg" >
+
+        <ImageView
+            android:id="@+id/title_weather_share"
+            android:layout_width="30dp"
+            android:layout_height="15dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/biz_plugin_weather_menu_select_city" />
+    </RelativeLayout>
+
+</RelativeLayout>

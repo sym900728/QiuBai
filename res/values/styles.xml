@@ -1,0 +1,73 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="AppBaseTheme" parent="android:Theme.Light"></style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme"></style>
+    
+    <!-- Common -->
+    <style name="CommonActionDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item> 
+        <item name="android:windowBackground">@drawable/common_action_bar_panel_bg</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>  
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+    
+    <style name="CommonDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item> 
+        <item name="android:windowBackground">@color/common_dialog_bg_color</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>  
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+    
+    <style name="CommonProgressDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item> 
+        <item name="android:windowBackground">@color/common_progress_dialog_bg_color</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+    
+    <style name="CommonTitleBarBackgroundStyle">
+        <item name="android:background">@color/common_title_bg_color</item>
+    </style>
+    
+    <style name="CommonTitleBarStyle" parent="android:Theme">
+        <item name="android:windowTitleSize">45dp</item>
+        <item name="android:windowTitleBackgroundStyle">@style/CommonTitleBarBackgroundStyle</item>
+    </style>
+    
+    <!-- CharacterDetailActivity -->
+    <style name="CharacterDetailCustomWindowTitleBackground">
+        <item name="android:background">@drawable/cd_title_bar_bg</item>
+    </style>
+
+    <style name="CharacterDetailTitleBarStyle" parent="android:Theme">
+        <item name="android:windowTitleSize">45dp</item>
+        <item name="android:windowTitleBackgroundStyle">@style/CharacterDetailCustomWindowTitleBackground</item>
+    </style>
+
+    <!-- Comment Activity -->
+    <style name="CommentCustomWindowTitleBackground">
+        <item name="android:background">@drawable/cd_title_bar_bg</item>
+    </style>
+
+    <style name="CommentTitleBarStyle" parent="android:Theme">
+        <item name="android:windowTitleSize">45dp</item>
+        <item name="android:windowTitleBackgroundStyle">@style/CommentCustomWindowTitleBackground</item>
+    </style>
+    
+    <!-- Login Activity -->
+
+    <!-- Register Activity -->
+    
+    <!-- Forget Password Activity -->
+    
+    <!-- Main Activity -->
+    
+</resources>

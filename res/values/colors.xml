@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- common color -->
+    <color name="common_title_bg_color">#EB413D</color>
+    <color name="common_white_color">#FFFFFF</color>
+    <color name="common_black_color">#000000</color>
+    <color name="common_grey_color">#AAAAAA</color>
+    
+    <!-- main activity -->
+    <color name="main_viewpager_title_bg_color">#FAFAFA</color>
+    <color name="main_viewpager_title_tv_active_color">#EB413D</color>
+    <color name="main_viewpager_title_tv_inactive_color">#AAAAAA</color>
+    <color name="main_drawer_right_bg_color">#FBFBFB</color>
+    <color name="activity_main_gray">#82858b</color>
+    <color name="activity_main_orange">#eb423d</color>
+    
+    <!-- main_title_bar.xml -->
+    <color name="activity_main_white">#ffffff</color>
+    
+    <!-- fragment_character_detail.xml -->
+    <color name="fragment_character_black">#3d3d3d</color>
+    
+    <!-- fragment_picture_detail.xml -->
+    <color name="fragment_picture_black">#000000</color>
+    
+    <!-- fragment_picture_layout.xml  fragment_character_layout.xml-->
+    <color name="fragment_picture_transport">#efefef</color>
+    <color name="fragment_picture_bg">#f6f6f6</color>
+    
+    <!-- character detail activity -->
+    <color name="cd_activity_bg_color">#F6F6F6</color>
+    <color name="cd_content_title_text_color">#000000</color>
+    <color name="cd_content_text_color">#333333</color>
+    <color name="cd_title_comment_text_color">#FF0000</color>
+    <color name="cd_support_text_color">#333333</color>
+    <color name="cd_tread_text_color">#333333</color>
+    
+    <!-- character detail action bar -->
+    <color name="cd_action_text_color">#3F3F3F</color>
+    
+    <!-- character detail dialog font -->
+    <color name="cd_dialog_font_tv_title_color">#000000</color>
+    <color name="cd_dialog_font_tv_content_color">#333333</color>
+    <color name="cd_dialog_font_tv_confirm_color">#368BCB</color>
+    <color name="cd_dialog_font_tv_cancel_color">#BEBEBE</color>
+    
+    <!-- comment activity -->
+    <color name="comment_activity_bg_color">#F6F6F6</color>
+    <color name="comment_listview_item_username_color">#1E88E5</color>
+    <color name="comment_listview_item_from_color">#999999</color>
+    <color name="comment_listview_item_time_color">#999999</color>
+    <color name="comment_listview_item_content_color">#333333</color>
+    <color name="comment_rel_fd_bg_color">#FFFFFF</color>
+    <color name="comment_edittext_text_color">#333333</color>
+    <color name="comment_send_disable_text_color">#999999</color>
+    <color name="comment_send_enable_text_color">#268CE6</color>
+    
+    <!-- login activity -->
+    <color name="login_bg_color">#F6F6F6</color>
+    <color name="login_title_text_color">#FFFFFF</color>
+    <color name="login_tv_register_color">#FF0000</color>
+    <color name="login_tv_no_account_color">#000000</color>
+    <color name="login_tv_other_way_login_color">#767676</color>
+    <color name="login_tv_other_way_color">#AAAAAA</color>
+    <color name="login_tv_login_color">#FFFFFF</color>
+    <color name="login_tv_hint_color">#CCCCCC</color>
+    <color name="login_tv_forget_password_color">#000000</color>
+    
+    <!-- register activity -->
+    <color name="register_bg_color">#F6F6F6</color>
+    <color name="register_title_text_color">#FFFFFF</color>
+    <color name="register_tv_register_color">#FFFFFF</color>
+    <color name="register_tv_hint_color">#CCCCCC</color>
+    <color name="register_tv_prompt_color">#888888</color>
+    <color name="register_tv_prompt_content_color">#AAAAAA</color>
+    
+    <!-- forget password activity -->
+    <color name="fpw_title_text_color">#FFFFFF</color>
+    <color name="fpw_bg_color">#F6F6F6</color>
+    <color name="fpw_tv_send_color">#FFFFFF</color>
+    <color name="fpw_tv_hint_color">#CCCCCC</color>
+    <color name="fpw_tv_prompt_color">#888888</color>
+    <color name="fpw_tv_prompt_content_color">#AAAAAA</color>
+    
+    <!-- person activity -->
+    <color name="person_bg_color">#F6F6F6</color>
+    
+    <!-- person dialog nickname -->
+    <color name="person_dialog_font_tv_confirm_color">#368BCB</color>
+    <color name="person_dialog_font_tv_cancel_color">#BEBEBE</color>
+    
+    <!-- common action bar -->
+    <color name="common_action_content_text_color">#3F3F3F</color>
+    
+    <!-- common dialog -->
+    <color name="common_dialog_bg_color">#00000000</color>
+    
+    <!-- common progress dialog -->
+    <color name="common_progress_dialog_bg_color">#00000000</color>
+    
+    <!-- guide_activity_dot_normal.xml -->
+    <color name="guide_activity_dot_normal_color">#55000000</color>
+    
+    <!-- guide_activity_dot_focused.xml -->
+    <color name="guide_activity_dot_focused_color">#aaffffff</color>
+    
+    <!-- share_dialog.xml -->
+    <color name="share_dialog_text">#7d7d7d</color>
+    
+    <!-- fragment_character_listview_head -->
+    <color name="fragment_head_gray">#2d2c2c</color>
+</resources>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="45dp" >
+
+    <RelativeLayout
+        android:id="@+id/main_title_reL_menu"
+        android:layout_width="60dp"
+        android:layout_height="45dp"
+        android:background="@drawable/main_rel_bg" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/title_menu_left" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/main_title_rel_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp"
+        android:layout_toRightOf="@id/main_title_reL_menu" >
+
+        <TextView
+            android:id="@+id/title_menu_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/title_text"
+            android:textColor="@color/activity_main_white"
+            android:textSize="17sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_main_title_right"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/main_rel_bg" >
+
+        <ImageView
+            android:id="@+id/title_menu_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/title_menu_right" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/main_title_rel_person"
+        android:layout_width="55dp"
+        android:layout_height="45dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/rel_main_title_right"
+        android:background="@drawable/main_rel_bg" >
+
+        <ImageView
+            android:id="@+id/title_menu_avator"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/title_menu_avatar" />
+    </RelativeLayout>
+
+</RelativeLayout>

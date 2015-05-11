@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">QiuBai</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_text">糗百</string>
+
+    <!-- Character Detail Activity -->
+    <string name="title_activity_cd">CharacterDetailActivity</string>
+
+    <!-- Comment Activity -->
+    <string name="title_activity_comment">CommentActivity</string>
+
+    <!-- PictureText Activity -->
+    <string name="title_activity_picture_text">PictureTextActivity</string>
+
+    <!-- Login Activity -->
+    <string name="title_activity_login">LoginActivity</string>
+
+    <!-- Register Activity -->
+    <string name="title_activity_register">RegisterActivity</string>
+
+    <!-- Forget Password Activity -->
+    <string name="title_activity_forget_passwrod">ForgetPasswordActivity</string>
+    
+    <!-- Person Activity -->
+    <string name="title_activity_person">PersonActivity</string>
+    
+    <!-- Guide Activity -->
+    <string name="title_activity_guide">GuideActivity</string>
+    
+    <!-- FirstEnter Activity -->
+    <string name="title_activity_first_enter">FirstEnterActivity</string>
+    
+    <!-- fragment_character_listview_footer.xml -->
+    <string name="character_load_full">已加载全部</string>
+    <string name="character_no_date">暂无数据</string>
+    <string name="character_more">加载中</string>
+    
+    <!-- weather_main.xml -->
+    <string name="weather_from">数据来源中国天气</string>
+    
+
+</resources>
