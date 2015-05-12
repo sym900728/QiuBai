@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/novels_bg_color"
+    android:orientation="vertical" >
+    
+    <RelativeLayout
+        android:id="@+id/novels_rel_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <include layout="@layout/common_refresh_listview_header_hidden" />
+
+        <com.qiubai.view.CommonRefreshListView
+            android:id="@+id/novels_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null" >
+        </com.qiubai.view.CommonRefreshListView>
+    </RelativeLayout>
+    
+</LinearLayout>

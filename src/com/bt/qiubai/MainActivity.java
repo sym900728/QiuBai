@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.ListFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -41,8 +42,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qiubai.entity.Weather;
-import com.qiubai.fragment.CharacterFragment;
-import com.qiubai.fragment.HotFragment;
 import com.qiubai.fragment.PictureFragment;
 import com.qiubai.service.CityService;
 import com.qiubai.service.UserService;
@@ -58,14 +57,15 @@ import com.qiubai.util.WeatherKeyUtil;
 public class MainActivity extends FragmentActivity implements OnClickListener {
 
 	private RelativeLayout main_title_reL_menu, rel_main_right, main_title_rel_person, 
-		main_viewpager_title_rel_hot, main_viewpager_title_rel_character, main_viewpager_title_rel_picture;
+		main_viewpager_title_rel_picture, main_viewpager_title_rel_joke, 
+		main_viewpager_title_rel_novel, main_viewpager_title_rel_diy;
 	private RelativeLayout main_drawer_right, main_drawer_left, main_drawer_left_rel_hot, 
 		main_drawer_left_rel_character, main_drawer_left_rel_picture;
 	private LinearLayout main_drawer_right_lin_comment, main_drawer_right_lin_collect, lin_weather, lin_setting;
-	private ImageView main_viewpager_title_iv_hot, main_viewpager_title_iv_character, main_viewpager_title_iv_picture,
-		main_drawer_right_iv_avatar, title_menu_avator;
-	private TextView main_viewpager_title_tv_hot, main_viewpager_title_tv_character, main_viewpager_title_tv_picture,
-		main_drawer_right_tv_nickname, text_weather;
+	private ImageView main_viewpager_title_iv_picture, main_viewpager_title_iv_joke, main_viewpager_title_iv_novel,
+		main_viewpager_title_iv_diy, main_drawer_right_iv_avatar, title_menu_avator;
+	private TextView main_viewpager_title_tv_picture, main_viewpager_title_tv_joke, main_viewpager_title_tv_novel,
+		main_viewpager_title_tv_diy, main_drawer_right_tv_nickname, text_weather;
 	private DrawerLayout main_drawer;
 	private ViewPager main_viewpager;
 	
@@ -89,7 +89,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	private String cityCode, public_key, private_key, key, getUrl;
 	private Weather weather;
 	private List<Weather> listWeathers;
-	private static String TAG = "MainActivity";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +99,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		
 		screenWidth = getWindowManager().getDefaultDisplay().getWidth();
 		screenHeight = getWindowManager().getDefaultDisplay().getHeight();
+		bitmap_underline = BitmapUtil.resizeBitmapFillBox(screenWidth/4, DensityUtil.dip2px(this, 2.5f), BitmapFactory.decodeResource(getResources(), R.drawable.main_viewpager_title_underline));
 		
 		title_menu_avator = (ImageView) findViewById(R.id.title_menu_avator);
 		main_title_reL_menu = (RelativeLayout) findViewById(R.id.main_title_reL_menu);
@@ -108,19 +108,22 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		rel_main_right.setOnClickListener(this);
 		main_title_rel_person = (RelativeLayout) findViewById(R.id.main_title_rel_person);
 		main_title_rel_person.setOnClickListener(this);
-		main_viewpager_title_rel_hot = (RelativeLayout) findViewById(R.id.main_viewpager_title_rel_hot);
-		main_viewpager_title_rel_hot.setOnClickListener(this);
-		main_viewpager_title_rel_character = (RelativeLayout) findViewById(R.id.main_viewpager_title_rel_character);
-		main_viewpager_title_rel_character.setOnClickListener(this);
 		main_viewpager_title_rel_picture = (RelativeLayout) findViewById(R.id.main_viewpager_title_rel_picture);
 		main_viewpager_title_rel_picture.setOnClickListener(this);
-		main_viewpager_title_iv_hot = (ImageView) findViewById(R.id.main_viewpager_title_iv_hot);
-		main_viewpager_title_iv_character = (ImageView) findViewById(R.id.main_viewpager_title_iv_character);
+		main_viewpager_title_rel_joke = (RelativeLayout) findViewById(R.id.main_viewpager_title_rel_joke);
+		main_viewpager_title_rel_joke.setOnClickListener(this);
+		main_viewpager_title_rel_novel = (RelativeLayout) findViewById(R.id.main_viewpager_title_rel_novel);
+		main_viewpager_title_rel_novel.setOnClickListener(this);
+		main_viewpager_title_rel_diy = (RelativeLayout) findViewById(R.id.main_viewpager_title_rel_diy);
+		main_viewpager_title_rel_diy.setOnClickListener(this);
 		main_viewpager_title_iv_picture = (ImageView) findViewById(R.id.main_viewpager_title_iv_picture);
-		bitmap_underline = BitmapUtil.resizeBitmapFillBox(screenWidth/3, DensityUtil.dip2px(this, 2.5f), BitmapFactory.decodeResource(getResources(), R.drawable.main_viewpager_title_underline));
-		main_viewpager_title_tv_hot = (TextView) findViewById(R.id.main_viewpager_title_tv_hot);
-		main_viewpager_title_tv_character = (TextView) findViewById(R.id.main_viewpager_title_tv_character);
+		main_viewpager_title_iv_joke = (ImageView) findViewById(R.id.main_viewpager_title_iv_joke);
+		main_viewpager_title_iv_novel = (ImageView) findViewById(R.id.main_viewpager_title_iv_novel);
+		main_viewpager_title_iv_diy = (ImageView) findViewById(R.id.main_viewpager_title_iv_diy);
 		main_viewpager_title_tv_picture = (TextView) findViewById(R.id.main_viewpager_title_tv_picture);
+		main_viewpager_title_tv_joke = (TextView) findViewById(R.id.main_viewpager_title_tv_joke);
+		main_viewpager_title_tv_novel = (TextView) findViewById(R.id.main_viewpager_title_tv_novel);
+		main_viewpager_title_tv_diy = (TextView) findViewById(R.id.main_viewpager_title_tv_diy);
 		
 		initTitleDialog(); //加载titlebar的dialog控件
 		main_drawer = (DrawerLayout) findViewById(R.id.main_drawer);
@@ -153,6 +156,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		main_viewpager.setAdapter(mainFragmentPagerAdpater);
 		main_viewpager.setCurrentItem(0);
 		setViewpagerTitleTextColor(0);
+		main_viewpager.setOffscreenPageLimit(3);//set buffer memory figure out pause
 		main_viewpager.setOnPageChangeListener(new MainOnPageChangeListener());
 	}
 	
@@ -217,14 +221,17 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 			//Intent intent = new Intent(MainActivity.this, CharacterDetailActivity.class);
 			//startActivity(intent);
 			break;
-		case R.id.main_viewpager_title_rel_hot:
+		case R.id.main_viewpager_title_rel_picture:
 			main_viewpager.setCurrentItem(0);
 			break;
-		case R.id.main_viewpager_title_rel_character:
+		case R.id.main_viewpager_title_rel_joke:
 			main_viewpager.setCurrentItem(1);
 			break;
-		case R.id.main_viewpager_title_rel_picture:
+		case R.id.main_viewpager_title_rel_novel:
 			main_viewpager.setCurrentItem(2);
+			break;
+		case R.id.main_viewpager_title_rel_diy:
+			main_viewpager.setCurrentItem(3);
 			break;
 		case R.id.main_drawer_left_rel_hot:
 			main_viewpager.setCurrentItem(0);
@@ -333,17 +340,25 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		public void onPageScrolled(int item, float arg1, int distance) {
 			//System.out.println("item" + item + "   distance:" + distance);
 			if(item == 0){
-				translateUnderline( (float)distance/3, bitmap_underline, main_viewpager_title_iv_hot);
-				translateUnderline(- (float)screenWidth/3 + (float)distance/3, bitmap_underline, main_viewpager_title_iv_character);
-				translateUnderline(- (float)screenWidth/3 * 2 + (float)distance/3, bitmap_underline, main_viewpager_title_iv_picture);
+				translateUnderline( (float)distance/4, bitmap_underline, main_viewpager_title_iv_picture);
+				translateUnderline(- (float)screenWidth/4 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_joke);
+				translateUnderline(- (float)screenWidth/4 * 2 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_novel);
+				translateUnderline(- (float)screenWidth/4 * 3 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_diy);
 			} else if(item == 1){
-				translateUnderline( (float)screenWidth/3 + (float)distance/3, bitmap_underline, main_viewpager_title_iv_hot);
-				translateUnderline( (float)distance/3, bitmap_underline, main_viewpager_title_iv_character);
-				translateUnderline(- (float)screenWidth/3 + (float)distance/3, bitmap_underline, main_viewpager_title_iv_picture);
+				translateUnderline( (float)screenWidth/4 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_picture);
+				translateUnderline( (float)distance/4, bitmap_underline, main_viewpager_title_iv_joke);
+				translateUnderline(- (float)screenWidth/4 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_novel);
+				translateUnderline(- (float)screenWidth/4 * 2 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_diy);
 			} else if(item == 2){
-				translateUnderline( (float)screenWidth/3 * 2 + (float)distance/3, bitmap_underline, main_viewpager_title_iv_hot);
-				translateUnderline( ((float)screenWidth)/3 + (float)distance/3, bitmap_underline, main_viewpager_title_iv_character);
-				translateUnderline( (float)distance/3, bitmap_underline, main_viewpager_title_iv_picture);
+				translateUnderline( (float)screenWidth/4 * 2 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_picture);
+				translateUnderline( (float)screenWidth/4 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_joke);
+				translateUnderline( (float)distance/4, bitmap_underline, main_viewpager_title_iv_novel);
+				translateUnderline(- (float)screenWidth/4 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_diy);
+			} else if(item == 3){
+				translateUnderline( (float)screenWidth/4 * 3 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_picture);
+				translateUnderline( (float)screenWidth/4 * 2 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_joke);
+				translateUnderline( (float)screenWidth/4 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_novel);
+				translateUnderline( (float)distance/4, bitmap_underline, main_viewpager_title_iv_diy);
 			}
 		}
 
@@ -372,12 +387,15 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	 * initialize fragment
 	 */
 	private void initFragment() {
-		HotFragment hotFragment = new HotFragment();
-		CharacterFragment characterFragment = new CharacterFragment();
-		PictureFragment pictureFragment = new PictureFragment();
-		list_fragments.add(hotFragment);
-		list_fragments.add(characterFragment);
-		list_fragments.add(pictureFragment);
+		PictureFragment picturesFragment = new PictureFragment();
+		JokesFragment jokesFragment = new JokesFragment();
+		NovelsFragment novelsFragment = new NovelsFragment();
+		DiyFragment diyFragment = new DiyFragment();
+		
+		list_fragments.add(picturesFragment);
+		list_fragments.add(jokesFragment);
+		list_fragments.add(novelsFragment);
+		list_fragments.add(diyFragment);
 	}
 
 	private class MainFragmentPagerAdapter extends FragmentPagerAdapter{
@@ -403,17 +421,25 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	 */
 	private void setViewpagerTitleTextColor(int item){
 		if(item == 0){
-			main_viewpager_title_tv_hot.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_active_color));
-			main_viewpager_title_tv_character.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
-			main_viewpager_title_tv_picture.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
-		} else if(item == 1){
-			main_viewpager_title_tv_hot.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
-			main_viewpager_title_tv_character.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_active_color));
-			main_viewpager_title_tv_picture.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
-		} else if(item == 2){
-			main_viewpager_title_tv_hot.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
-			main_viewpager_title_tv_character.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
 			main_viewpager_title_tv_picture.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_active_color));
+			main_viewpager_title_tv_joke.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
+			main_viewpager_title_tv_novel.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
+			main_viewpager_title_tv_diy.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
+		} else if(item == 1){
+			main_viewpager_title_tv_picture.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
+			main_viewpager_title_tv_joke.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_active_color));
+			main_viewpager_title_tv_novel.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
+			main_viewpager_title_tv_diy.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
+		} else if(item == 2){
+			main_viewpager_title_tv_picture.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
+			main_viewpager_title_tv_joke.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
+			main_viewpager_title_tv_novel.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_active_color));
+			main_viewpager_title_tv_diy.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
+		} else if(item == 3){
+			main_viewpager_title_tv_picture.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
+			main_viewpager_title_tv_joke.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
+			main_viewpager_title_tv_novel.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
+			main_viewpager_title_tv_diy.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_active_color));
 		}
 	}
 	

@@ -7,78 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:background="@color/main_viewpager_title_bg_color"
-            android:orientation="horizontal" >
-
-            <RelativeLayout
-                android:id="@+id/main_viewpager_title_rel_hot"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_weight="1" >
-
-                <TextView
-                    android:id="@+id/main_viewpager_title_tv_hot"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="热门"
-                    android:textColor="#AAAAAA"
-                    android:textSize="15sp" />
-
-                <ImageView
-                    android:id="@+id/main_viewpager_title_iv_hot"
-                    android:layout_width="match_parent"
-                    android:layout_height="2.5dp"
-                    android:layout_alignParentBottom="true" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/main_viewpager_title_rel_character"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_weight="1" >
-
-                <TextView
-                    android:id="@+id/main_viewpager_title_tv_character"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="文字"
-                    android:textColor="#AAAAAA"
-                    android:textSize="15sp" />
-
-                <ImageView
-                    android:id="@+id/main_viewpager_title_iv_character"
-                    android:layout_width="match_parent"
-                    android:layout_height="2.5dp"
-                    android:layout_alignParentBottom="true" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/main_viewpager_title_rel_picture"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_weight="1" >
-
-                <TextView
-                    android:id="@+id/main_viewpager_title_tv_picture"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="图片"
-                    android:textColor="#AAAAAA"
-                    android:textSize="15sp" />
-
-                <ImageView
-                    android:id="@+id/main_viewpager_title_iv_picture"
-                    android:layout_width="match_parent"
-                    android:layout_height="2.5dp"
-                    android:layout_alignParentBottom="true" />
-            </RelativeLayout>
-        </LinearLayout>
+        <include layout="@layout/main_viewpager_title" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/main_viewpager"
@@ -88,18 +17,17 @@
         </android.support.v4.view.ViewPager>
     </FrameLayout>
 
-    <RelativeLayout 
+    <RelativeLayout
         android:id="@+id/main_drawer_left"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="#FBFBFB"
-        android:clickable="true"
-        >
-        
+        android:clickable="true" >
+
         <include layout="@layout/main_drawer_left" />
     </RelativeLayout>
-    
+
     <RelativeLayout
         android:id="@+id/main_drawer_right"
         android:layout_width="wrap_content"

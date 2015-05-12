@@ -27,6 +27,17 @@
     <color name="fragment_picture_transport">#efefef</color>
     <color name="fragment_picture_bg">#f6f6f6</color>
     
+    <!-- pictures fragment -->
+    <color name="pictures_bg_color">#F6F6F6</color>
+    
+    <!-- jokes fragment -->
+    <color name="jokes_bg_color">#F6F6F6</color>
+    
+    <!-- novels fragment -->
+    <color name="novels_bg_color">#F6F6F6</color>
+    
+    <!-- diy fragment -->
+    
     <!-- character detail activity -->
     <color name="cd_activity_bg_color">#F6F6F6</color>
     <color name="cd_content_title_text_color">#000000</color>
