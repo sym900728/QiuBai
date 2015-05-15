@@ -1,5 +1,7 @@
 package com.bt.qiubai;
 
+import java.util.zip.Inflater;
+
 import com.qiubai.view.CommonRefreshListView;
 
 import android.content.Context;
@@ -33,13 +35,15 @@ public class NovelsFragment extends Fragment{
 	}
 	
 	private class NovelsBaseAdapter extends BaseAdapter{
+		private LayoutInflater inflater;// 得到一个LayoutInfalter对象用来导入布局
 		
 		public NovelsBaseAdapter(Context context) {
+			this.inflater = LayoutInflater.from(context);
 		}
 		
 		@Override
 		public int getCount() {
-			return 0;
+			return 20;
 		}
 
 		@Override
@@ -54,7 +58,8 @@ public class NovelsFragment extends Fragment{
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			return null;
+			convertView = inflater.inflate(R.layout.novels_listview_item, null);
+			return convertView;
 		}
 		
 	}
