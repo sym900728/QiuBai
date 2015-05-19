@@ -9,6 +9,9 @@
     <!-- Character Detail Activity -->
     <string name="title_activity_cd">CharacterDetailActivity</string>
 
+    <!-- Novel Activity -->
+    <string name="title_activity_novel">NovelActivity</string>
+    
     <!-- Comment Activity -->
     <string name="title_activity_comment">CommentActivity</string>
 

@@ -207,8 +207,8 @@ public class CommonRefreshListView extends ListView implements OnScrollListener{
 			} else if (firstVisibleItemPosition == 0 && currentState == REFRESH_RELEASE){
 				if(paddingTop > -headerViewHeight){
 					if(paddingTop < 0){
-						//currentState = REFRESH_PULL_DOWN;
-						System.out.println("PULL DOWN");
+						currentState = REFRESH_PULL_DOWN;
+						//System.out.println("PULL DOWN");
 					}	
 				}
 				zoomClockBackground(paddingTop);

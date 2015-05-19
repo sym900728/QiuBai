@@ -1,6 +1,11 @@
 package com.qiubai.entity;
 
-public class Novel {
+import java.io.Serializable;
+
+public class Novel implements Serializable{
+	
+	private static final long serialVersionUID = 6852433777237470865L;
+	
 	private int id;
 	private String belong;
 	private String image;

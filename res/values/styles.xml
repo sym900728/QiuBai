@@ -41,26 +41,19 @@
         <item name="android:windowTitleSize">45dp</item>
         <item name="android:windowTitleBackgroundStyle">@style/CommonTitleBarBackgroundStyle</item>
     </style>
+
+    <style name="CommonTitleBarBackgroundStyle2">
+        <item name="android:background">@drawable/common_title_bar_bg</item>
+    </style>
+    <!-- this common title bar style 2 is different with common title bar style
+    this background is white -->
+    <style name="CommonTitleBarStyle2" parent="android:Theme">
+        <item name="android:windowTitleSize">45dp</item>
+        <item name="android:windowTitleBackgroundStyle">@style/CommonTitleBarBackgroundStyle2</item>
+    </style>
+    <!-- Novel Activity -->
     
-    <!-- CharacterDetailActivity -->
-    <style name="CharacterDetailCustomWindowTitleBackground">
-        <item name="android:background">@drawable/cd_title_bar_bg</item>
-    </style>
-
-    <style name="CharacterDetailTitleBarStyle" parent="android:Theme">
-        <item name="android:windowTitleSize">45dp</item>
-        <item name="android:windowTitleBackgroundStyle">@style/CharacterDetailCustomWindowTitleBackground</item>
-    </style>
-
     <!-- Comment Activity -->
-    <style name="CommentCustomWindowTitleBackground">
-        <item name="android:background">@drawable/cd_title_bar_bg</item>
-    </style>
-
-    <style name="CommentTitleBarStyle" parent="android:Theme">
-        <item name="android:windowTitleSize">45dp</item>
-        <item name="android:windowTitleBackgroundStyle">@style/CommentCustomWindowTitleBackground</item>
-    </style>
     
     <!-- Login Activity -->
 

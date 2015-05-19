@@ -7,10 +7,11 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="17" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:allowBackup="true"
@@ -22,18 +23,29 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/CommonTitleBarStyle" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.bt.qiubai.CharacterDetailActivity"
             android:label="@string/title_activity_cd"
             android:screenOrientation="portrait"
-            android:theme="@style/CharacterDetailTitleBarStyle" >
+            android:theme="@style/CommonTitleBarStyle2" >
+        </activity>
+        <activity
+            android:name="com.bt.qiubai.NovelActivity"
+            android:label="@string/title_activity_novel"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonTitleBarStyle2" >
         </activity>
         <activity
             android:name="com.bt.qiubai.CommentActivity"
             android:label="@string/title_activity_comment"
             android:screenOrientation="portrait"
-            android:theme="@style/CommentTitleBarStyle" >
+            android:theme="@style/CommonTitleBarStyle2" >
         </activity>
         <activity
             android:name="com.bt.qiubai.PictureTextActivity"
@@ -53,44 +65,17 @@
             android:screenOrientation="portrait"
             android:theme="@style/CommonTitleBarStyle" >
         </activity>
-        <activity 
+        <activity
             android:name="com.bt.qiubai.ForgetPasswordActivity"
             android:label="title_activity_forget_passwrod"
-            android:screenOrientation="portrait"
-            android:theme="@style/CommonTitleBarStyle"
-            >
-        </activity>
-        <activity 
-            android:name="com.bt.qiubai.PersonActivity"
-            android:label="title_activity_person"
             android:screenOrientation="portrait"
             android:theme="@style/CommonTitleBarStyle" >
         </activity>
         <activity
-            android:name="com.bt.qiubai.GuideActivity"
-            android:label="@string/title_activity_guide"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name="com.bt.qiubai.WeatherActivity"
+            android:name="com.bt.qiubai.PersonActivity"
+            android:label="title_activity_person"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" >
-        </activity>
-        <activity
-            android:name="com.bt.qiubai.CityActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-
-        <activity
-            android:name="com.bt.qiubai.FirstEnterActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:theme="@style/CommonTitleBarStyle" >
         </activity>
     </application>
 

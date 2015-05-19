@@ -3,22 +3,15 @@ package com.bt.qiubai;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.app.ListFragment;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -42,17 +35,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qiubai.entity.Weather;
-import com.qiubai.fragment.PictureFragment;
-import com.qiubai.service.CityService;
 import com.qiubai.service.UserService;
-import com.qiubai.service.WeatherService;
 import com.qiubai.util.BitmapUtil;
-import com.qiubai.util.DateUtil;
 import com.qiubai.util.DensityUtil;
-import com.qiubai.util.HttpUtil;
 import com.qiubai.util.ReadPropertiesUtil;
 import com.qiubai.util.SharedPreferencesUtil;
-import com.qiubai.util.WeatherKeyUtil;
 
 public class MainActivity extends FragmentActivity implements OnClickListener {
 
@@ -75,8 +62,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	private List<Fragment> list_fragments = new ArrayList<Fragment>();
 	private MainFragmentPagerAdapter mainFragmentPagerAdpater;
 	
-	private WeatherService weatherService;
-	private CityService cityService;
 	private SharedPreferencesUtil spUtil = new SharedPreferencesUtil(MainActivity.this);
 	private UserService userService = new UserService();
 	
@@ -212,14 +197,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 			break;
 		case R.id.rel_main_title_right:
 			rightDialog.show();
-			SharedPreferences share = getSharedPreferences(CityActivity.SHAREDPREFERENCES_FIRSTENTER, MODE_PRIVATE);
-			String city = share.getString(CityActivity.CityActivity_CityTown, "常州");
-			new WeatherInfo().execute(city);
-			//initWeather(city);
-			// 点击右边的按钮响应事件
-			// 跳转到detail activity
-			//Intent intent = new Intent(MainActivity.this, CharacterDetailActivity.class);
-			//startActivity(intent);
 			break;
 		case R.id.main_viewpager_title_rel_picture:
 			main_viewpager.setCurrentItem(0);
@@ -260,9 +237,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 			break;
 		case R.id.main_menu_action_weather_lin:
 			//点击天气
-			rightDialog.dismiss();
-			Intent intent_weather = new Intent(MainActivity.this, WeatherActivity.class);
-			startActivity(intent_weather);
+			//rightDialog.dismiss();
+			//Intent intent_weather = new Intent(MainActivity.this, WeatherActivity.class);
+			//startActivity(intent_weather);
 			//Toast.makeText(MainActivity.this, "今天天气晴朗", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.main_menu_action_setting_lin:
@@ -387,7 +364,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	 * initialize fragment
 	 */
 	private void initFragment() {
-		PictureFragment picturesFragment = new PictureFragment();
+		PicturesFragment picturesFragment = new PicturesFragment();
 		JokesFragment jokesFragment = new JokesFragment();
 		NovelsFragment novelsFragment = new NovelsFragment();
 		DiyFragment diyFragment = new DiyFragment();
@@ -460,71 +437,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		imageview.setImageBitmap(alterBitmap);		
 	}
 	
-	
-	/**
-	 * @author Tim
-	 * 天气
-	 *
-	 */
-	private class WeatherInfo extends AsyncTask<String, Void, String> {
-
-		@Override
-		protected String doInBackground(String... params) {
-			weatherService = new WeatherService();
-			listWeathers = new ArrayList<Weather>();
-			cityCode = weatherService.getCityByName(params[0],
-					getApplicationContext());
-			public_key = WeatherKeyUtil.JointPublicUrl(cityCode);
-			private_key = ReadPropertiesUtil.read("weather", "PRIVATE");
-
-			key = WeatherKeyUtil.standardURLEncoder(public_key, private_key);
-			getUrl = WeatherKeyUtil.JointUrl(cityCode, key);
-			String result = HttpUtil.doGet(getUrl);
-//			Log.d(TAG, result);
-			return result;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-
-			try {
-				JSONObject jsonObject = new JSONObject(result);
-
-				JSONArray fs = jsonObject.getJSONObject("f").getJSONArray("f1");
-				for (int i = 0; i < fs.length(); i++) {
-					JSONObject f = (JSONObject) fs.opt(i);
-					weather = new Weather();
-
-					String dayTemperature = f.getString("fc");// 27
-					String nightTemperature = f.getString("fd");// 15
-					weather.setDayTemperature(dayTemperature);
-					weather.setNightTemperature(nightTemperature);
-
-					listWeathers.add(weather);
-				}
-				String temp = null;
-				if (DateUtil.getCurrentHourMinute() >= 1800
-						&& DateUtil.getCurrentHourMinute() <= 2400) {
-
-					String dayTemp = listWeathers.get(1).getDayTemperature();
-					String nightTemp = listWeathers.get(1)
-							.getNightTemperature();
-					temp = dayTemp + "°/" + nightTemp + "°";
-				} else {
-					String dayTemp = listWeathers.get(0).getDayTemperature();
-					String nightTemp = listWeathers.get(0)
-							.getNightTemperature();
-					temp = dayTemp + "°/" + nightTemp + "°";
-				}
-
-				text_weather.setText(temp);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-
-	}
 	
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {

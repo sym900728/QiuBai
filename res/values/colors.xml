@@ -6,6 +6,11 @@
     <color name="common_black_color">#000000</color>
     <color name="common_grey_color">#AAAAAA</color>
     
+    <color name="common_dialog_font_tv_title_color">#000000</color>
+    <color name="common_dialog_font_tv_content_color">#333333</color>
+    <color name="common_dialog_font_tv_confirm_color">#368BCB</color>
+    <color name="common_dialog_font_tv_cancel_color">#BEBEBE</color>
+    
     <!-- main activity -->
     <color name="main_viewpager_title_bg_color">#FAFAFA</color>
     <color name="main_viewpager_title_tv_active_color">#EB413D</color>
@@ -17,24 +22,24 @@
     <!-- main_title_bar.xml -->
     <color name="activity_main_white">#ffffff</color>
     
-    <!-- fragment_character_detail.xml -->
-    <color name="fragment_character_black">#3d3d3d</color>
-    
-    <!-- fragment_picture_detail.xml -->
-    <color name="fragment_picture_black">#000000</color>
-    
-    <!-- fragment_picture_layout.xml  fragment_character_layout.xml-->
-    <color name="fragment_picture_transport">#efefef</color>
-    <color name="fragment_picture_bg">#f6f6f6</color>
-    
     <!-- pictures fragment -->
     <color name="pictures_bg_color">#F6F6F6</color>
     
     <!-- jokes fragment -->
     <color name="jokes_bg_color">#F6F6F6</color>
     
+    <!-- joke activity -->
+    
     <!-- novels fragment -->
     <color name="novels_bg_color">#F6F6F6</color>
+    
+    <!-- novel activity -->
+    <color name="novel_activity_bg_color">#F6F6F6</color>
+    <color name="novel_content_title_text_color">#000000</color>
+    <color name="novel_content_text_color">#333333</color>
+    <color name="novel_title_comment_text_color">#FF0000</color>
+    <color name="novel_support_text_color">#333333</color>
+    <color name="novel_tread_text_color">#333333</color>
     
     <!-- diy fragment -->
     
