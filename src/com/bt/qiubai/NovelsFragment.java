@@ -126,6 +126,7 @@ public class NovelsFragment extends Fragment implements OnRefreshListener{
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			convertView = inflater.inflate(R.layout.novels_listview_item, null);
+			System.out.println("position: " + position);
 			Novel novel = novels.get(position);
 			novels_listview_item_tv_title = (TextView) convertView.findViewById(R.id.novels_listview_item_tv_title);
 			novels_listview_item_tv_title.setText(novel.getTitle());
@@ -174,6 +175,7 @@ public class NovelsFragment extends Fragment implements OnRefreshListener{
 			case NOVELS_LISTVIEW_REFRESH_NOCONTENT:
 				break;
 			case NOVELS_LISTVIEW_REFRESH_ERROR:
+				novelsListView.hiddenHeaderView(false);
 				break;
 			case NOVELS_LISTVIEW_FIRST_LOADING_SUCCESS:
 				novels.clear();
@@ -211,7 +213,6 @@ public class NovelsFragment extends Fragment implements OnRefreshListener{
 	 */
 	@Override
 	public void onDownPullRefresh() {
-		System.out.println("ok");
 		new Thread(){
 			public void run() {
 				String result = novelService.getNovels("0", NOVELS_LISTVIEW_SIZE);

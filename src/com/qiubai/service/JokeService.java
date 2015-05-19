@@ -1,8 +1,10 @@
 package com.qiubai.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.qiubai.entity.Joke;
 import com.qiubai.util.HttpUtil;
 import com.qiubai.util.ReadPropertiesUtil;
 
@@ -24,5 +26,9 @@ public class JokeService {
 		params.put("offset", offset);
 		params.put("length", length);
 		return HttpUtil.doPost(params, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "getJokes"));
+	}
+	
+	public List<Joke> parseJokesJson(String json){
+		return null;
 	}
 }

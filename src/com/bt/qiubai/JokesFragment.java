@@ -1,5 +1,9 @@
 package com.bt.qiubai;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,16 +14,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.qiubai.entity.Joke;
+import com.qiubai.entity.Novel;
+import com.qiubai.service.JokeService;
 import com.qiubai.view.CommonRefreshListView;
 import com.qiubai.view.CommonRefreshListView.OnRefreshListener;
 
 public class JokesFragment extends Fragment implements OnRefreshListener{
 	
 	private RelativeLayout jokes_rel_listview, crl_header_hidden;
+	private TextView jokes_listview_item_tv_content, jokes_listview_item_tv_zan, jokes_listview_item_tv_comment;
 	private CommonRefreshListView jokesListView;
 	
 	private JokesBaseAdapter jokesBaseAdapter;
+	private JokeService jokeService = new JokeService();
+	private List<Joke> jokes = new ArrayList<Joke>();
 	
 	private final static int JOKES_LISTVIEW_REFRESH_SUCCESS = 1;
 	private final static int JOKES_LISTVIEW_REFRESH_NOCONTENT = 2;
@@ -43,7 +54,30 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 		jokesListView.setAdapter(jokesBaseAdapter);
 		jokesListView.setHiddenView(crl_header_hidden);
 		jokesListView.setOnRefreshListener(this);
+		
+		onFirstLoadingJokes();
 		return view_jokes;
+	}
+	
+	public void onFirstLoadingJokes(){
+		jokes_rel_listview.setVisibility(View.INVISIBLE);
+		new Thread(){
+			public void run() {
+				String result = jokeService.getJokes("0", JOKES_LISTVIEW_SIZE);
+				if("nocontent".equals(result)){
+					Message msg = jokesHandler.obtainMessage(JOKES_LISTVIEW_FIRST_LOADING_NOCONTENT);
+					jokesHandler.sendMessage(msg);
+				} else if("error".equals(result)){
+					Message msg = jokesHandler.obtainMessage(JOKES_LISTVIEW_FIRST_LOADING_ERROR);
+					jokesHandler.sendMessage(msg);
+				} else {
+					List<Joke> list = jokeService.parseJokesJson(result);
+					Message msg = jokesHandler.obtainMessage(JOKES_LISTVIEW_FIRST_LOADING_SUCCESS);
+					msg.obj = list;
+					jokesHandler.sendMessage(msg);
+				}
+			};
+		}.start();
 	}
 	
 	private class JokesBaseAdapter extends BaseAdapter{
@@ -55,7 +89,7 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 		
 		@Override
 		public int getCount() {
-			return 20;
+			return jokes.size();
 		}
 
 		@Override
@@ -68,9 +102,14 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 			return 0;
 		}
 
+		@SuppressLint("ViewHolder")
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			convertView = inflater.inflate(R.layout.jokes_listview_item, null);
+			//Joke joke = jokes.get(position);
+			jokes_listview_item_tv_content = (TextView) convertView.findViewById(R.id.jokes_listview_item_tv_content);
+			jokes_listview_item_tv_zan = (TextView) convertView.findViewById(R.id.jokes_listview_item_tv_zan);
+			jokes_listview_item_tv_comment = (TextView) convertView.findViewById(R.id.jokes_listview_item_tv_comment);
 			return convertView;
 		}
 		
@@ -108,7 +147,19 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 	public void onDownPullRefresh() {
 		new Thread(){
 			public void run() {
-				
+				String result = jokeService.getJokes("0", JOKES_LISTVIEW_SIZE);
+				if("nocontent".equals(result)){
+					Message msg = jokesHandler.obtainMessage(JOKES_LISTVIEW_REFRESH_NOCONTENT);
+					jokesHandler.sendMessage(msg);
+				} else if("error".equals(result)){
+					Message msg = jokesHandler.obtainMessage(JOKES_LISTVIEW_REFRESH_ERROR);
+					jokesHandler.sendMessage(msg);
+				} else {
+					List<Joke> list = jokeService.parseJokesJson(result);
+					Message msg = jokesHandler.obtainMessage(JOKES_LISTVIEW_REFRESH_SUCCESS);
+					msg.obj = list;
+					jokesHandler.sendMessage(msg);
+				}
 			};
 		}.start();
 	}
@@ -120,7 +171,20 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 	public void onLoadingMore() {
 		new Thread(){
 			public void run() {
-				
+				String offset = String.valueOf(jokes.size());
+				String result = jokeService.getJokes(offset, JOKES_LISTVIEW_SIZE);
+				if("nocontent".equals(result)){
+					Message msg = jokesHandler.obtainMessage(JOKES_LISTVIEW_REFRESH_LOADING_MORE_NOCONTENT);
+					jokesHandler.sendMessage(msg);
+				} else if("error".equals(result)){
+					Message msg = jokesHandler.obtainMessage(JOKES_LISTVIEW_REFRESH_LOADING_MORE_ERROR);
+					jokesHandler.sendMessage(msg);
+				} else {
+					List<Joke> list = jokeService.parseJokesJson(result);
+					Message msg = jokesHandler.obtainMessage(JOKES_LISTVIEW_REFRESH_LOADING_MORE_SUCCESS);
+					msg.obj = list;
+					jokesHandler.sendMessage(msg);
+				}
 			};
 		}.start();
 	}

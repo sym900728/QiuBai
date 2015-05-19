@@ -29,6 +29,10 @@
     <color name="jokes_bg_color">#F6F6F6</color>
     
     <!-- joke activity -->
+    <color name="joke_activity_bg_color">#F6F6F6</color>
+    <color name="joke_content_title_text_color">#000000</color>
+    <color name="joke_content_text_color">#333333</color>
+    <color name="joke_title_comment_text_color">#FF0000</color>
     
     <!-- novels fragment -->
     <color name="novels_bg_color">#F6F6F6</color>
@@ -38,8 +42,6 @@
     <color name="novel_content_title_text_color">#000000</color>
     <color name="novel_content_text_color">#333333</color>
     <color name="novel_title_comment_text_color">#FF0000</color>
-    <color name="novel_support_text_color">#333333</color>
-    <color name="novel_tread_text_color">#333333</color>
     
     <!-- diy fragment -->
     

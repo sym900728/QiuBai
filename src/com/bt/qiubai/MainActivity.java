@@ -34,7 +34,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.qiubai.entity.Weather;
 import com.qiubai.service.UserService;
 import com.qiubai.util.BitmapUtil;
 import com.qiubai.util.DensityUtil;
@@ -70,10 +69,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	private final static int WEATHER = 1; 
 	private final static int EXIT = 2; 
 	private static boolean isExit = false; // 定义变量，判断是否退出
-	
-	private String cityCode, public_key, private_key, key, getUrl;
-	private Weather weather;
-	private List<Weather> listWeathers;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
