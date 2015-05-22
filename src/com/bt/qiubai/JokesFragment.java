@@ -136,16 +136,26 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case JOKES_LISTVIEW_REFRESH_SUCCESS:
+				jokesListView.hiddenFooterView(true);
+				jokesListView.hiddenHeaderView(true);
+				jokes.clear();
+				jokes = (List<Joke>) msg.obj;
+				jokesBaseAdapter.notifyDataSetChanged();
 				break;
 			case JOKES_LISTVIEW_REFRESH_NOCONTENT:
 				break;
 			case JOKES_LISTVIEW_REFRESH_ERROR:
 				break;
 			case JOKES_LISTVIEW_REFRESH_LOADING_MORE_SUCCESS:
+				jokesListView.hiddenFooterView(true);
+				addToListJokes((List<Joke>) msg.obj);
+				jokesBaseAdapter.notifyDataSetChanged();
 				break;
 			case JOKES_LISTVIEW_REFRESH_LOADING_MORE_NOCONTENT:
+				jokesListView.hiddenHeaderView(false);
 				break;
 			case JOKES_LISTVIEW_REFRESH_LOADING_MORE_ERROR:
+				jokesListView.hiddenFooterView(true);
 				break;
 			case JOKES_LISTVIEW_FIRST_LOADING_SUCCESS:
 				jokes.clear();
@@ -160,6 +170,12 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 			}
 		};
 	};
+	
+	public void addToListJokes(List<Joke> list){
+		for (Joke joke : list) {
+			jokes.add(joke);
+		}
+	}
 
 	/**
 	 * pull down refresh
