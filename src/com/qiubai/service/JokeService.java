@@ -1,8 +1,13 @@
 package com.qiubai.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.qiubai.entity.Joke;
 import com.qiubai.util.HttpUtil;
@@ -29,6 +34,25 @@ public class JokeService {
 	}
 	
 	public List<Joke> parseJokesJson(String json){
-		return null;
+		List<Joke> list = new ArrayList<Joke>();
+		try {
+			JSONObject jsonObject = new JSONObject(json);
+			JSONArray jsonArray = jsonObject.getJSONArray("joke");
+			
+			for(int i = 0; i < jsonArray.length(); i ++){
+				Joke joke = new Joke();
+				JSONObject jsonObject2 = (JSONObject) jsonArray.get(i);
+				joke.setBelong(jsonObject2.getString("belong"));
+				joke.setId(jsonObject2.getInt("id"));
+				joke.setComments(jsonObject2.getInt("comments"));
+				joke.setContent(jsonObject2.getString("content"));
+				joke.setTime(jsonObject2.getString("time"));
+				joke.setZan(jsonObject2.getInt("zan"));
+				list.add(joke);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 }

@@ -61,6 +61,7 @@ public class NovelsFragment extends Fragment implements OnRefreshListener{
 		novelsListView.setAdapter(novelsBaseAdapter);
 		novelsListView.setHiddenView(crl_header_hidden);
 		novelsListView.setOnRefreshListener(this);
+		novelsListView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		novelsListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override

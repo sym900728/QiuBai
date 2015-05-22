@@ -12,7 +12,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,6 +24,7 @@ import com.qiubai.entity.Novel;
 import com.qiubai.service.JokeService;
 import com.qiubai.view.CommonRefreshListView;
 import com.qiubai.view.CommonRefreshListView.OnRefreshListener;
+import com.qiubai.view.TestListView;
 
 public class JokesFragment extends Fragment implements OnRefreshListener{
 	
@@ -54,6 +58,15 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 		jokesListView.setAdapter(jokesBaseAdapter);
 		jokesListView.setHiddenView(crl_header_hidden);
 		jokesListView.setOnRefreshListener(this);
+		jokesListView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+		jokesListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				
+			}
+		});
 		
 		onFirstLoadingJokes();
 		return view_jokes;
@@ -106,16 +119,20 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			convertView = inflater.inflate(R.layout.jokes_listview_item, null);
-			//Joke joke = jokes.get(position);
+			Joke joke = jokes.get(position);
 			jokes_listview_item_tv_content = (TextView) convertView.findViewById(R.id.jokes_listview_item_tv_content);
+			jokes_listview_item_tv_content.setText(joke.getContent());
 			jokes_listview_item_tv_zan = (TextView) convertView.findViewById(R.id.jokes_listview_item_tv_zan);
+			jokes_listview_item_tv_zan.setText(joke.getZan() + " 赞");
 			jokes_listview_item_tv_comment = (TextView) convertView.findViewById(R.id.jokes_listview_item_tv_comment);
+			jokes_listview_item_tv_comment.setText(joke.getComments() + " 评论");
 			return convertView;
 		}
 		
 	}
 	
 	private Handler jokesHandler = new Handler(){
+		@SuppressWarnings("unchecked")
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case JOKES_LISTVIEW_REFRESH_SUCCESS:
@@ -131,6 +148,10 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 			case JOKES_LISTVIEW_REFRESH_LOADING_MORE_ERROR:
 				break;
 			case JOKES_LISTVIEW_FIRST_LOADING_SUCCESS:
+				jokes.clear();
+				jokes =  (List<Joke>) msg.obj;
+				jokesBaseAdapter.notifyDataSetChanged();
+				jokes_rel_listview.setVisibility(View.VISIBLE);
 				break;
 			case JOKES_LISTVIEW_FIRST_LOADING_ERROR:
 				break;
