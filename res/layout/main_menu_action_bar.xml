@@ -31,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:textColor="@color/cd_action_text_color"
+                android:textColor="@color/common_action_text_color"
                 android:textSize="15sp" />
         </RelativeLayout>
     </LinearLayout>
@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:text="设置"
-                android:textColor="@color/cd_action_text_color"
+                android:textColor="@color/common_action_text_color"
                 android:textSize="15sp" />
         </RelativeLayout>
     </LinearLayout>

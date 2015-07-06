@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -64,7 +65,13 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				
+				Joke joke = jokes.get(position - 1);
+				Intent intent = new Intent(getActivity(), JokeActivity.class);
+				Bundle bundle = new Bundle();
+				bundle.putSerializable("joke", joke);
+				intent.putExtras(bundle);
+				startActivity(intent);
+				getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
 			}
 		});
 		

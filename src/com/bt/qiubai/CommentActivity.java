@@ -53,6 +53,7 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 	private TextView comment_tv_no_comment;
 	
 	private int newsid;
+	private String belong;
 	private Animation anim_rotate, anim_publish_rotate;
 	private CommentBaseAdapter commentBaseAdapter;
 	private GestureDetector gestureDetector;
@@ -91,6 +92,7 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 		
 		Intent intent = getIntent();
 		newsid = intent.getIntExtra("newsid", 0);
+		belong = intent.getStringExtra("belong");
 		
 		crl_header_hidden = (RelativeLayout) findViewById(R.id.crl_header_hidden);
 		comment_rel_listview = (RelativeLayout) findViewById(R.id.comment_rel_listview);
@@ -222,7 +224,7 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 			public void run() {
 				String userid = spUtil.getUserid();
 				String token = spUtil.getToken();
-				String result = commentService.addComment(String.valueOf(newsid), userid, token, comment_edittext_comment.getText().toString().trim());
+				String result = commentService.addComment(belong, String.valueOf(newsid), userid, token, comment_edittext_comment.getText().toString().trim());
 				if("success".equals(result)){
 					Message msg = commentHandle.obtainMessage(COMMENT_SUCCESS);
 					commentHandle.sendMessage(msg);
@@ -247,7 +249,7 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 		common_progress_dialog_iv_rotate.startAnimation(anim_rotate);
 		new Thread(){
 			public void run() {
-				String result = commentService.getComments(String.valueOf(newsid), "0", COMMENT_LISTVIEW_SIZE);
+				String result = commentService.getComments(belong, String.valueOf(newsid), "0", COMMENT_LISTVIEW_SIZE);
 				if("nocontent".equals(result)){
 					Message msg = commentHandle.obtainMessage(COMMENT_LISTVIEW_FIRST_LOADING_NOCONTENT);
 					commentHandle.sendMessage(msg);
@@ -272,7 +274,7 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 	public void onDownPullRefresh() {
 		new Thread(){
 			public void run() {
-				String result = commentService.getComments(String.valueOf(newsid), "0", COMMENT_LISTVIEW_SIZE);
+				String result = commentService.getComments(belong, String.valueOf(newsid), "0", COMMENT_LISTVIEW_SIZE);
 				if("nocontent".equals(result)){
 					Message msg = commentHandle.obtainMessage(COMMENT_LISTVIEW_REFRESH_NOCONTENT);
 					commentHandle.sendMessage(msg);
@@ -295,7 +297,7 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 		new Thread(){
 			public void run() {
 				String offset = String.valueOf(comments.size());
-				String result = commentService.getComments(String.valueOf(newsid), offset, COMMENT_LISTVIEW_SIZE);
+				String result = commentService.getComments(belong, String.valueOf(newsid), offset, COMMENT_LISTVIEW_SIZE);
 				if("nocontent".equals(result)){
 					Message msg = commentHandle.obtainMessage(COMMENT_LISTVIEW_REFRESH_LOADING_MORE_NOCONTENT);
 					commentHandle.sendMessage(msg);

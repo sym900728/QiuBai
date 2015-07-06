@@ -6,6 +6,8 @@
     <color name="common_black_color">#000000</color>
     <color name="common_grey_color">#AAAAAA</color>
     
+    <color name="common_action_text_color">#3F3F3F</color>
+    
     <color name="common_dialog_font_tv_title_color">#000000</color>
     <color name="common_dialog_font_tv_content_color">#333333</color>
     <color name="common_dialog_font_tv_confirm_color">#368BCB</color>
@@ -52,9 +54,6 @@
     <color name="cd_title_comment_text_color">#FF0000</color>
     <color name="cd_support_text_color">#333333</color>
     <color name="cd_tread_text_color">#333333</color>
-    
-    <!-- character detail action bar -->
-    <color name="cd_action_text_color">#3F3F3F</color>
     
     <!-- character detail dialog font -->
     <color name="cd_dialog_font_tv_title_color">#000000</color>

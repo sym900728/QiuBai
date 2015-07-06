@@ -32,7 +32,7 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 	private TextView novel_tv_title, novel_tv_from, novel_tv_time, novel_tv_content, novel_tv_comment;
 	private ImageView common_dialog_font_iv_super_large, common_dialog_font_iv_large, 
 		common_dialog_font_iv_middle, common_dialog_font_iv_small;
-	private LinearLayout novel_action_share, novel_action_collect, novel_action_comment, novel_action_font,
+	private LinearLayout common_action_share, common_action_collect, common_action_comment, common_action_font,
 		common_dialog_font_super_large, common_dialog_font_large, common_dialog_font_middle,
 		common_dialog_font_small, common_dialog_font_cancel, common_dialog_font_confirm;
 
@@ -76,16 +76,16 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 		gestureDetector = new GestureDetector(NovelActivity.this,onGestureListener);
 		
 		actionDialog = new Dialog(NovelActivity.this, R.style.CommonActionDialog);
-		actionDialog.setContentView(R.layout.novel_action_bar);
+		actionDialog.setContentView(R.layout.common_action_bar);
 		actionDialog.getWindow().setGravity(Gravity.RIGHT | Gravity.TOP);
-		novel_action_share = (LinearLayout) actionDialog.findViewById(R.id.novel_action_share);
-		novel_action_share.setOnClickListener(this);
-		novel_action_collect = (LinearLayout) actionDialog.findViewById(R.id.novel_action_collect);
-		novel_action_collect.setOnClickListener(this);
-		novel_action_comment = (LinearLayout) actionDialog.findViewById(R.id.novel_action_comment);
-		novel_action_comment.setOnClickListener(this);
-		novel_action_font = (LinearLayout) actionDialog.findViewById(R.id.novel_action_font);
-		novel_action_font.setOnClickListener(this);
+		common_action_share = (LinearLayout) actionDialog.findViewById(R.id.common_action_share);
+		common_action_share.setOnClickListener(this);
+		common_action_collect = (LinearLayout) actionDialog.findViewById(R.id.common_action_collect);
+		common_action_collect.setOnClickListener(this);
+		common_action_comment = (LinearLayout) actionDialog.findViewById(R.id.common_action_comment);
+		common_action_comment.setOnClickListener(this);
+		common_action_font = (LinearLayout) actionDialog.findViewById(R.id.common_action_font);
+		common_action_font.setOnClickListener(this);
 		
 		fontDialog = new Dialog(NovelActivity.this, R.style.CommonDialog);
 		fontDialog.setContentView(R.layout.common_dialog_font);
@@ -115,21 +115,28 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 			overridePendingTransition(R.anim.stay_in_place, R.anim.out_to_right);
 			break;
 		case R.id.novel_title_rel_comment:
-			Intent intent = new Intent(NovelActivity.this, CommentActivity.class);
-			intent.putExtra("newsid", 320);
-			startActivity(intent);
+			Intent intent_to_comment = new Intent(NovelActivity.this, CommentActivity.class);
+			intent_to_comment.putExtra("belong", "belong");
+			intent_to_comment.putExtra("newsid", 320);
+			startActivity(intent_to_comment);
 			overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
 			break;
 		case R.id.novel_title_rel_right:
 			actionDialog.show();
 			break;
-		case R.id.novel_action_share:
+		case R.id.common_action_share:
 			break;
-		case R.id.novel_action_collect:
+		case R.id.common_action_collect:
 			break;
-		case R.id.novel_action_comment:
+		case R.id.common_action_comment:
+			actionDialog.dismiss();
+			Intent intent_to_comment2 = new Intent(NovelActivity.this, CommentActivity.class);
+			intent_to_comment2.putExtra("belong", "belong");
+			intent_to_comment2.putExtra("newsid", 320);
+			startActivity(intent_to_comment2);
+			overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
 			break;
-		case R.id.novel_action_font:
+		case R.id.common_action_font:
 			actionDialog.dismiss();
 			initFontDialogRadio();
 			fontDialog.show();
@@ -277,6 +284,7 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 					return true;
 				}else if(e2.getX() - e1.getX() < -200){
 					Intent intent = new Intent(NovelActivity.this, CommentActivity.class);
+					intent.putExtra("belong", "novel");
 					intent.putExtra("newsid", 320);
 					startActivity(intent);
 					overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);

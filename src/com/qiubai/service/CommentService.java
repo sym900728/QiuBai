@@ -27,8 +27,9 @@ public class CommentService {
 		port = ReadPropertiesUtil.read("config", "port");
 	}
 	
-	public String getComments(String newsid, String offset, String length){
+	public String getComments(String belong, String newsid, String offset, String length){
 		Map<String, String> params = new HashMap<String, String>();
+		params.put("belong", belong);
 		params.put("newsid", newsid);
 		params.put("offset", offset);
 		params.put("length", length);
@@ -48,6 +49,7 @@ public class CommentService {
 				JSONObject jsonObject3 = (JSONObject) jsonObject2.get("comment");
 				JSONObject jsonObject4 = (JSONObject) jsonObject2.get("user");
 				comment.setId(jsonObject3.getInt("id"));
+				comment.setBelong(jsonObject3.getString("belong"));
 				comment.setNewsid(jsonObject3.getInt("newsid"));
 				comment.setUserid(jsonObject3.getString("userid"));
 				comment.setContent(jsonObject3.getString("content"));
@@ -65,8 +67,9 @@ public class CommentService {
 		return comments;
 	}
 	
-	public String addComment(String newsid, String userid, String token, String content){
+	public String addComment(String belong, String newsid, String userid, String token, String content){
 		Map<String, String> params = new HashMap<String, String>();
+		params.put("belong", belong);
 		params.put("newsid", newsid);
 		params.put("userid", userid);
 		params.put("content", content);

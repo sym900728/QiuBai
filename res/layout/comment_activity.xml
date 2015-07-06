@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="40dp"
             android:background="@null"
-            android:hint="写跟帖"
+            android:hint="写评论"
             android:inputType="textMultiLine"
             android:maxLength="500"
             android:maxLines="3"

@@ -35,6 +35,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/CommonTitleBarStyle2" >
         </activity>
+        <activity 
+            android:name="com.bt.qiubai.JokeActivity"
+            android:label="@string/title_activity_joke"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonTitleBarStyle2"
+            >
+        </activity>
         <activity
             android:name="com.bt.qiubai.NovelActivity"
             android:label="@string/title_activity_novel"

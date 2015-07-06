@@ -8,6 +8,9 @@
 
     <!-- Character Detail Activity -->
     <string name="title_activity_cd">CharacterDetailActivity</string>
+    
+    <!-- Joke Activity -->
+    <string name="title_activity_joke">JokeActivity</string>
 
     <!-- Novel Activity -->
     <string name="title_activity_novel">NovelActivity</string>

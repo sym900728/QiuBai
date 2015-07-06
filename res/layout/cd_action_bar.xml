@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:text="分享"
-                android:textColor="@color/cd_action_text_color"
+                android:textColor="@color/common_action_text_color"
                 android:textSize="15sp" />
         </RelativeLayout>
     </LinearLayout>
@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:text="收藏"
-                android:textColor="@color/cd_action_text_color"
+                android:textColor="@color/common_action_text_color"
                 android:textSize="15sp" />
         </RelativeLayout>
     </LinearLayout>
@@ -95,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:text="发表跟帖"
-                android:textColor="@color/cd_action_text_color"
+                android:textColor="@color/common_action_text_color"
                 android:textSize="15sp" />
         </RelativeLayout>
     </LinearLayout>
@@ -115,7 +115,7 @@
                 android:layout_width="60dp"
                 android:layout_height="15dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/cd_action_font" />
+                android:src="@drawable/common_action_font" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -127,7 +127,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:text="正文字号"
-                android:textColor="@color/cd_action_text_color"
+                android:textColor="@color/common_action_text_color"
                 android:textSize="15sp" />
         </RelativeLayout>
     </LinearLayout>
