@@ -12,7 +12,9 @@ public class PictureService {
 	private String port;
 	
 	public PictureService() {
-		super();
+		protocol = ReadPropertiesUtil.read("config", "protocol");
+		ip = ReadPropertiesUtil.read("config", "ip");
+		port = ReadPropertiesUtil.read("config", "port");
 	}
 	
 	/**
@@ -20,11 +22,7 @@ public class PictureService {
 	 * @return 从服务器获得图片版块的service
 	 */
 	public String getPictures(Map<String, String> map){
-		protocol = ReadPropertiesUtil.read("config", "protocol");
-		ip = ReadPropertiesUtil.read("config", "ip");
-		port = ReadPropertiesUtil.read("config", "port");
-		return HttpUtil.doPost(map, protocol + ip + ":" + port
-				+ ReadPropertiesUtil.read("link", "Picture"));
+		return HttpUtil.doPost(map, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "Picture"));
 	}
 	
 	

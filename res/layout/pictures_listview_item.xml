@@ -2,7 +2,47 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:background="@drawable/comment_listview_item_press_bg"
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp" >
     
+    <RelativeLayout 
+        android:id="@+id/pictures_listview_item_rel_first"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:background="@drawable/base_white_bg"
+        >
+        <ImageView 
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/pt_test1"
+            />
 
+    </RelativeLayout>
+    
+    <RelativeLayout 
+        android:id="@+id/pictures_listview_item_rel_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <ImageView 
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            
+            />
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:id="@+id/pictures_listview_item_rel_three"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <ImageView 
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </RelativeLayout>
+    
 </LinearLayout>

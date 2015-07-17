@@ -1,5 +1,8 @@
 package com.bt.qiubai;
 
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -15,6 +18,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -22,23 +26,27 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.qiubai.entity.Joke;
+import com.qiubai.util.DensityUtil;
 import com.qiubai.util.SharedPreferencesUtil;
 
 public class JokeActivity extends Activity implements OnTouchListener, OnClickListener{
 
 	private ScrollView joke_scroll;
 	private RelativeLayout joke_title_rel_back, joke_title_rel_comment, joke_title_rel_right;
+	private RelativeLayout joke_rel_zan;
 	private TextView joke_tv_comment, joke_tv_from, joke_tv_time, joke_tv_content;
 	private LinearLayout common_action_share, common_action_collect, common_action_comment,
 		common_action_font;
 	private ImageView common_dialog_font_iv_super_large, common_dialog_font_iv_large,
 		common_dialog_font_iv_middle, common_dialog_font_iv_small;
+	private ImageView joke_iv_zan;
 	private LinearLayout common_dialog_font_super_large, common_dialog_font_large,
 		common_dialog_font_middle, common_dialog_font_small, common_dialog_font_cancel,
 		common_dialog_font_confirm;
 	
 	private Dialog actionDialog;
 	private Dialog fontDialog;
+	private boolean isShowZan = true, isZanAnimating = false;
 	private GestureDetector gestureDetector;
 	private SharedPreferencesUtil spUtil = new SharedPreferencesUtil(JokeActivity.this);
 	
@@ -55,6 +63,10 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 		joke_title_rel_comment.setOnClickListener(this);
 		joke_title_rel_right = (RelativeLayout) findViewById(R.id.joke_title_rel_right);
 		joke_title_rel_right.setOnClickListener(this);
+		joke_rel_zan = (RelativeLayout) findViewById(R.id.joke_rel_zan);
+		joke_rel_zan.setOnClickListener(this);
+		joke_iv_zan = (ImageView) findViewById(R.id.joke_iv_zan);
+		joke_iv_zan.setTag("inactive");
 		
 		joke_scroll = (ScrollView) findViewById(R.id.joke_scroll);
 		joke_scroll.setOnTouchListener(this);
@@ -123,6 +135,17 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 		case R.id.joke_title_rel_right:
 			actionDialog.show();
 			break;
+		case R.id.joke_rel_zan:
+			Bitmap bitmap_inactive = BitmapFactory.decodeResource(getResources(), R.drawable.joke_zan_inactive);
+			Bitmap bitmap_activie = BitmapFactory.decodeResource(getResources(), R.drawable.joke_zan_active);
+			if("inactive".equals(joke_iv_zan.getTag().toString())){
+				joke_iv_zan.setImageBitmap(bitmap_activie);
+				joke_iv_zan.setTag("active");
+			} else {
+				joke_iv_zan.setImageBitmap(bitmap_inactive);
+				joke_iv_zan.setTag("inactive");
+			}
+			break;
 		case R.id.common_action_comment:
 			actionDialog.dismiss();
 			Intent intent_to_comment2 = new Intent(JokeActivity.this, CommentActivity.class);
@@ -156,6 +179,64 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 			fontDialog.dismiss();
 			break;
 
+		}
+	}
+	
+	/**
+	 * move zan
+	 */
+	public void moveZan(){
+		if(isShowZan && !isZanAnimating){
+			android.widget.RelativeLayout.LayoutParams lp = (android.widget.RelativeLayout.LayoutParams) joke_rel_zan.getLayoutParams();
+			lp.rightMargin = DensityUtil.dip2px(JokeActivity.this, 10);
+			joke_rel_zan.setLayoutParams(lp);
+			ObjectAnimator hideZanAnimator = ObjectAnimator.ofFloat(joke_rel_zan, "translationX", 0, DensityUtil.dip2px(this, 60));
+			hideZanAnimator.setDuration(600);
+			hideZanAnimator.setInterpolator(new LinearInterpolator());
+			hideZanAnimator.addListener(new AnimatorListener() {
+				@Override
+				public void onAnimationStart(Animator animation) {
+					isZanAnimating = true;
+				}
+				@Override
+				public void onAnimationRepeat(Animator animation) {
+				}
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					isZanAnimating = false;
+					isShowZan = false;
+				}
+				@Override
+				public void onAnimationCancel(Animator animation) {
+				}
+			});
+			hideZanAnimator.start();
+			
+		} else if(!isShowZan && !isZanAnimating){
+			android.widget.RelativeLayout.LayoutParams lp = (android.widget.RelativeLayout.LayoutParams) joke_rel_zan.getLayoutParams();
+			lp.rightMargin = - DensityUtil.dip2px(JokeActivity.this, 50);
+			joke_rel_zan.setLayoutParams(lp);
+			ObjectAnimator showZanAnimator = ObjectAnimator.ofFloat(joke_rel_zan, "translationX", 0, - DensityUtil.dip2px(this, 60));
+			showZanAnimator.setDuration(600);
+			showZanAnimator.setInterpolator(new LinearInterpolator());
+			showZanAnimator.addListener(new AnimatorListener() {
+				@Override
+				public void onAnimationStart(Animator animation) {
+					isZanAnimating = true;
+				}
+				@Override
+				public void onAnimationRepeat(Animator animation) {
+				}
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					isZanAnimating = false;
+					isShowZan = true;
+				}
+				@Override
+				public void onAnimationCancel(Animator animation) {
+				}
+			});
+			showZanAnimator.start();
 		}
 	}
 	
@@ -290,6 +371,11 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 				return false;
 			}
 			
+			return false;
+		}
+		
+		public boolean onDoubleTap(MotionEvent e) {
+			moveZan();
 			return false;
 		}
 	};
