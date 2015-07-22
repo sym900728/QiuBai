@@ -147,7 +147,7 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 			break;
 		case R.id.novel_title_rel_comment:
 			Intent intent_to_comment = new Intent(NovelActivity.this, CommentActivity.class);
-			intent_to_comment.putExtra("belong", "belong");
+			intent_to_comment.putExtra("belong", "novel");
 			intent_to_comment.putExtra("newsid", novel_id);
 			startActivity(intent_to_comment);
 			overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
@@ -162,7 +162,7 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 		case R.id.common_action_comment:
 			actionDialog.dismiss();
 			Intent intent_to_comment2 = new Intent(NovelActivity.this, CommentActivity.class);
-			intent_to_comment2.putExtra("belong", "belong");
+			intent_to_comment2.putExtra("belong", "novel");
 			intent_to_comment2.putExtra("newsid", novel_id);
 			startActivity(intent_to_comment2);
 			overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
