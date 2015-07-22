@@ -55,4 +55,18 @@ public class JokeService {
 		}
 		return list;
 	}
+	
+	public String setZan(String id, String flag){
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("id", id);
+		params.put("flag", flag);
+		return HttpUtil.doPost(params, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "setZan"));
+	}
+	
+	public String getJokeComments(String id){
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("id", id);
+		return HttpUtil.doPost(params, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "getJokeComments"));
+	}
+	
 }

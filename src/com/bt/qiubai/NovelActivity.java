@@ -1,6 +1,7 @@
 package com.bt.qiubai;
 
 import com.qiubai.entity.Novel;
+import com.qiubai.service.NovelService;
 import com.qiubai.util.SharedPreferencesUtil;
 
 import android.annotation.SuppressLint;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -36,10 +38,12 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 		common_dialog_font_super_large, common_dialog_font_large, common_dialog_font_middle,
 		common_dialog_font_small, common_dialog_font_cancel, common_dialog_font_confirm;
 
+	private int novel_id;
 	private Dialog actionDialog;
 	private Dialog fontDialog;
 	private GestureDetector gestureDetector;
 	private SharedPreferencesUtil spUtil = new SharedPreferencesUtil(NovelActivity.this);
+	private NovelService novelService = new NovelService();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,8 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 		
 		Intent intent = getIntent();
 		Novel novel = (Novel) intent.getSerializableExtra("novel");
+		
+		novel_id = novel.getId();
 		
 		novel_scroll = (ScrollView) findViewById(R.id.novel_scroll);
 		novel_scroll.setOnTouchListener(this);
@@ -108,6 +114,31 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 	}
 	
 	@Override
+	protected void onResume() {
+		super.onResume();
+		getNovelComments();
+	}
+	
+	/**
+	 * get novel comments
+	 */
+	public void getNovelComments(){
+		new Thread(){
+			public void run() {
+				final String result = novelService.getNovelComments(String.valueOf(novel_id));
+				novelHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						if(!"error".equals(result) && !"nocontent".equals(result)){
+							novel_tv_comment.setText(result + " 评论" );
+						}
+					}
+				});
+			};
+		}.start();
+	}
+	
+	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.novel_title_rel_back:
@@ -117,7 +148,7 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 		case R.id.novel_title_rel_comment:
 			Intent intent_to_comment = new Intent(NovelActivity.this, CommentActivity.class);
 			intent_to_comment.putExtra("belong", "belong");
-			intent_to_comment.putExtra("newsid", 320);
+			intent_to_comment.putExtra("newsid", novel_id);
 			startActivity(intent_to_comment);
 			overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
 			break;
@@ -132,7 +163,7 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 			actionDialog.dismiss();
 			Intent intent_to_comment2 = new Intent(NovelActivity.this, CommentActivity.class);
 			intent_to_comment2.putExtra("belong", "belong");
-			intent_to_comment2.putExtra("newsid", 320);
+			intent_to_comment2.putExtra("newsid", novel_id);
 			startActivity(intent_to_comment2);
 			overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
 			break;
@@ -262,6 +293,8 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 		return font;
 	}
 	
+	private Handler novelHandler = new Handler(){};
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
@@ -285,7 +318,7 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 				}else if(e2.getX() - e1.getX() < -200){
 					Intent intent = new Intent(NovelActivity.this, CommentActivity.class);
 					intent.putExtra("belong", "novel");
-					intent.putExtra("newsid", 320);
+					intent.putExtra("newsid", novel_id);
 					startActivity(intent);
 					overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
 					return true;

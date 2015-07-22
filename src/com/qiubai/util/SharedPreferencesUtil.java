@@ -10,6 +10,7 @@ public class SharedPreferencesUtil {
 	private SharedPreferences sharedPreferences;
 	private Context context;
 	private static final String QIUBAIXML = "qiubai";
+	private static final String JOKEXML = "joke";
 	public SharedPreferencesUtil(Context context){
 		this.context = context;
 	}
@@ -144,5 +145,29 @@ public class SharedPreferencesUtil {
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		editor.putString("icon", icon);
 		return editor.commit();
+	}
+	
+	/**
+	 * store joke zan: key => id, default no zan
+	 * @param id
+	 * @param flag
+	 * @return
+	 */
+	public boolean storeJokeZan(String id, String flag){
+		sharedPreferences = context.getSharedPreferences(JOKEXML, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString(id, flag);
+		return editor.commit();
+	}
+	
+	/**
+	 * get joke zan
+	 * @param id
+	 * @return flag  true: zan; false: no zan
+	 */
+	public String getJokeZan(String id){
+		sharedPreferences = context.getSharedPreferences(JOKEXML, Context.MODE_PRIVATE);
+		String flag = sharedPreferences.getString(id, null);
+		return flag;
 	}
 }

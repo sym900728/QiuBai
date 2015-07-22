@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -26,6 +27,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.qiubai.entity.Joke;
+import com.qiubai.service.CommentService;
+import com.qiubai.service.JokeService;
 import com.qiubai.util.DensityUtil;
 import com.qiubai.util.SharedPreferencesUtil;
 
@@ -48,7 +51,9 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 	private Dialog fontDialog;
 	private boolean isShowZan = true, isZanAnimating = false;
 	private GestureDetector gestureDetector;
+	private int joke_id;
 	private SharedPreferencesUtil spUtil = new SharedPreferencesUtil(JokeActivity.this);
+	private JokeService jokeService = new JokeService();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,10 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.joke_activity);
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,R.layout.joke_title);
+		
+		Intent intent = getIntent();
+		Joke joke = (Joke) intent.getSerializableExtra("joke");
+		joke_id = joke.getId();
 		
 		joke_title_rel_back = (RelativeLayout) findViewById(R.id.joke_title_rel_back);
 		joke_title_rel_back.setOnClickListener(this);
@@ -66,16 +75,12 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 		joke_rel_zan = (RelativeLayout) findViewById(R.id.joke_rel_zan);
 		joke_rel_zan.setOnClickListener(this);
 		joke_iv_zan = (ImageView) findViewById(R.id.joke_iv_zan);
-		joke_iv_zan.setTag("inactive");
+		setDefaultZan();
 		
 		joke_scroll = (ScrollView) findViewById(R.id.joke_scroll);
 		joke_scroll.setOnTouchListener(this);
 		
 		gestureDetector = new GestureDetector(JokeActivity.this,onGestureListener);
-		
-		Intent intent = getIntent();
-		Joke joke = (Joke) intent.getSerializableExtra("joke");
-		
 		joke_tv_comment = (TextView) findViewById(R.id.joke_tv_comment);
 		joke_tv_comment.setText(String.valueOf(joke.getComments()) + " 评论");
 		joke_tv_from = (TextView) findViewById(R.id.joke_tv_from);
@@ -119,6 +124,33 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 	}
 
 	@Override
+	protected void onResume() {
+		super.onResume();
+		getJokeComments();
+	}
+	
+	/**
+	 * get joke comments
+	 */
+	public void getJokeComments(){
+		new Thread(){
+			public void run() {
+				final String result = jokeService.getJokeComments(String.valueOf(joke_id));
+				if(result != null && !"".equals(result)){
+					jokeHandle.post(new Runnable() {
+						@Override
+						public void run() {
+							if( !"error".equals(result) && ! "nocontent".equals(result)){
+								joke_tv_comment.setText(result + " 评论");
+							}
+						}
+					});
+				}
+			};
+		}.start();
+	}
+	
+	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.joke_title_rel_back:
@@ -128,7 +160,7 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 		case R.id.joke_title_rel_comment:
 			Intent intent_to_comment = new Intent(JokeActivity.this, CommentActivity.class);
 			intent_to_comment.putExtra("belong", "joke");
-			intent_to_comment.putExtra("newsid", 320);
+			intent_to_comment.putExtra("newsid", joke_id);
 			startActivity(intent_to_comment);
 			overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
 			break;
@@ -141,16 +173,18 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 			if("inactive".equals(joke_iv_zan.getTag().toString())){
 				joke_iv_zan.setImageBitmap(bitmap_activie);
 				joke_iv_zan.setTag("active");
+				setZan("true");
 			} else {
 				joke_iv_zan.setImageBitmap(bitmap_inactive);
 				joke_iv_zan.setTag("inactive");
+				setZan("false");
 			}
 			break;
 		case R.id.common_action_comment:
 			actionDialog.dismiss();
 			Intent intent_to_comment2 = new Intent(JokeActivity.this, CommentActivity.class);
 			intent_to_comment2.putExtra("belong", "joke");
-			intent_to_comment2.putExtra("newsid", 320);
+			intent_to_comment2.putExtra("newsid", joke_id);
 			startActivity(intent_to_comment2);
 			overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
 			break;
@@ -180,6 +214,51 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 			break;
 
 		}
+	}
+	
+	public void tapZan(){
+		Bitmap bitmap_inactive = BitmapFactory.decodeResource(getResources(), R.drawable.joke_zan_inactive);
+		Bitmap bitmap_activie = BitmapFactory.decodeResource(getResources(), R.drawable.joke_zan_active);
+		if("inactive".equals(joke_iv_zan.getTag().toString())){
+			joke_iv_zan.setImageBitmap(bitmap_activie);
+			joke_iv_zan.setTag("active");
+		} else {
+			joke_iv_zan.setImageBitmap(bitmap_inactive);
+			joke_iv_zan.setTag("inactive");
+		}
+	}
+	
+	/**
+	 * set default zan
+	 */
+	public void setDefaultZan(){
+		Bitmap bitmap_inactive = BitmapFactory.decodeResource(getResources(), R.drawable.joke_zan_inactive);
+		Bitmap bitmap_activie = BitmapFactory.decodeResource(getResources(), R.drawable.joke_zan_active);
+		String flag = spUtil.getJokeZan(String.valueOf(joke_id));
+		if( "".equals(flag) ){
+			spUtil.storeJokeZan(String.valueOf(joke_id), "false");
+			joke_iv_zan.setImageBitmap(bitmap_inactive);
+			joke_iv_zan.setTag("inactive");
+		} else if( "true".equals(flag) ){
+			joke_iv_zan.setImageBitmap(bitmap_activie);
+			joke_iv_zan.setTag("active");
+		} else {
+			joke_iv_zan.setImageBitmap(bitmap_inactive);
+			joke_iv_zan.setTag("inactive");
+		}
+	}
+	
+	/**
+	 * set zan 
+	 * @param flag true: add one; false: minus one;
+	 */
+	public void setZan(final String flag){
+		spUtil.storeJokeZan(String.valueOf(joke_id), flag);
+		new Thread(){
+			public void run() {
+				jokeService.setZan(String.valueOf(joke_id), flag);
+			};
+		}.start();
 	}
 	
 	/**
@@ -339,6 +418,8 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 		return font;
 	}
 	
+	private Handler jokeHandle = new Handler(){};
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
@@ -362,7 +443,7 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 				}else if(e2.getX() - e1.getX() < -200){
 					Intent intent = new Intent(JokeActivity.this, CommentActivity.class);
 					intent.putExtra("belong", "joke");
-					intent.putExtra("newsid", 320);
+					intent.putExtra("newsid", joke_id);
 					startActivity(intent);
 					overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
 					return true;

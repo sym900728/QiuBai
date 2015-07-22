@@ -45,6 +45,12 @@ public class NovelService {
 		return HttpUtil.doPost(params, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "getNovels"));
 	}
 	
+	public String getNovelComments(String id){
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("id", id);
+		return HttpUtil.doPost(params, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "getNovelComments"));
+	}
+	
 	public List<Novel> parseNovelsJson(String json){
 		List<Novel> list = new ArrayList<Novel>();
 		try {

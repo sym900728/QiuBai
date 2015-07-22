@@ -9,6 +9,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -36,6 +38,7 @@ import android.widget.Toast;
 import com.qiubai.entity.CommentWithUser;
 import com.qiubai.service.CommentService;
 import com.qiubai.service.UserService;
+import com.qiubai.util.BitmapUtil;
 import com.qiubai.util.NetworkUtil;
 import com.qiubai.util.SharedPreferencesUtil;
 import com.qiubai.view.CommonRefreshListView;
@@ -49,11 +52,13 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 	private CommonRefreshListView commentListview;
 	private RelativeLayout crl_header_hidden;
 	private ImageView common_progress_dialog_iv_rotate, common_publish_progress_dialog_iv_rotate;
+	private ImageView comment_listview_item_iv_icon;
 	private TextView comment_listview_item_iv_content, comment_listview_item_tv_username, comment_listview_item_tv_time;
 	private TextView comment_tv_no_comment;
 	
 	private int newsid;
 	private String belong;
+	private String commentContentFlag = "nocontent";
 	private Animation anim_rotate, anim_publish_rotate;
 	private CommentBaseAdapter commentBaseAdapter;
 	private GestureDetector gestureDetector;
@@ -225,14 +230,15 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 				String userid = spUtil.getUserid();
 				String token = spUtil.getToken();
 				String result = commentService.addComment(belong, String.valueOf(newsid), userid, token, comment_edittext_comment.getText().toString().trim());
-				if("success".equals(result)){
-					Message msg = commentHandle.obtainMessage(COMMENT_SUCCESS);
-					commentHandle.sendMessage(msg);
-				} else if("fail".equals(result)){
+				if("fail".equals(result)){
 					Message msg = commentHandle.obtainMessage(COMMENT_FAIL);
 					commentHandle.sendMessage(msg);
 				} else if("error".equals(result)){
 					Message msg = commentHandle.obtainMessage(COMMENT_ERROR);
+					commentHandle.sendMessage(msg);
+				} else {
+					Message msg = commentHandle.obtainMessage(COMMENT_SUCCESS);
+					msg.obj = result;
 					commentHandle.sendMessage(msg);
 				}
 			};
@@ -341,6 +347,12 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 		public View getView(int position, View convertView, ViewGroup parent) {
 			convertView = inflater.inflate(R.layout.comment_listview_item, null);
 			CommentWithUser cwu = comments.get(position);
+			comment_listview_item_iv_icon = (ImageView) convertView.findViewById(R.id.comment_listview_item_iv_icon);
+			Bitmap defaultBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.main_drawer_right_person_avatar);
+			comment_listview_item_iv_icon.setImageBitmap(BitmapUtil.circleBitmap(defaultBitmap));
+			if( !"default".equals(cwu.getUser().getIcon()) ){
+				getUserIcon(cwu.getUser().getIcon(), comment_listview_item_iv_icon);
+			}
 			comment_listview_item_iv_content = (TextView) convertView.findViewById(R.id.comment_listview_item_iv_content);
 			comment_listview_item_iv_content.setText(cwu.getComment().getContent());
 			comment_listview_item_tv_username = (TextView) convertView.findViewById(R.id.comment_listview_item_tv_username);
@@ -352,6 +364,56 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 		
 	}
 
+	/**
+	 * get user icon
+	 * @param url
+	 * @param iv
+	 */
+	public void getUserIcon(final String url, final ImageView iv){
+		new Thread(){
+			public void run() {
+				final Bitmap bitmap = userService.getHeaderIcon(url);
+				commentHandle.post(new Runnable() {
+					@Override
+					public void run() {
+						if(bitmap != null){
+							iv.setImageBitmap(BitmapUtil.circleBitmap(bitmap));
+						}
+					}
+				});
+			};
+		}.start();
+	}
+	
+	/**
+	 * get comment by id
+	 * @param id
+	 */
+	public void getCommentById(final String id){
+		new Thread(){
+			public void run() {
+				String userid = spUtil.getUserid();
+				String token = spUtil.getToken();
+				final String result = commentService.getCommentById(token, id, userid);
+				if(!"error".equals(result) && !"nocontent".equals(result)){
+					commentHandle.post(new Runnable() {
+						@Override
+						public void run() {
+							CommentWithUser cwu = commentService.parseCommentJson(result);
+							comments.add(0, cwu);
+							commentBaseAdapter.notifyDataSetChanged();
+							if("nocontent".equals(commentContentFlag)){
+								commentContentFlag = "existcontent";
+								comment_rel_listview.setVisibility(View.VISIBLE);
+								comment_rel_no_comment.setVisibility(View.INVISIBLE);
+							}
+						}
+					});
+				}
+			};
+		}.start();
+	}
+	
 	/**
 	 * deal time string to MM/DD hh:mm
 	 * @param str
@@ -374,6 +436,8 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 				common_publish_progress_dialog_iv_rotate.clearAnimation();
 				publishProgressDialog.dismiss();
 				comment_edittext_comment.setText("");
+				String comment_id = (String) msg.obj;
+				getCommentById(comment_id);
 				Toast.makeText(CommentActivity.this, "发布成功", Toast.LENGTH_SHORT).show();
 				break;
 			case COMMENT_FAIL:
@@ -394,7 +458,7 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 				commentBaseAdapter.notifyDataSetChanged();
 				break;
 			case COMMENT_LISTVIEW_REFRESH_NOCONTENT:
-				comment_tv_no_comment.setText("暂时没有跟帖，请写跟帖");
+				comment_tv_no_comment.setText("暂时没有评论，请写评论");
 				commentListview.hiddenHeaderView(true);
 				commentListview.hiddenFooterView(true);
 				comment_rel_listview.setVisibility(View.INVISIBLE);
@@ -422,21 +486,24 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 				progressDialog.dismiss();
 				List<CommentWithUser> list2 = (List<CommentWithUser>) msg.obj;
 				comments.clear();
-				comments = list2;
+				addToListComments(list2);
 				commentBaseAdapter.notifyDataSetChanged();
 				comment_rel_listview.setVisibility(View.VISIBLE);
+				commentContentFlag = "existcontent";
 				break;
 			case COMMENT_LISTVIEW_FIRST_LOADING_ERROR:
 				common_progress_dialog_iv_rotate.clearAnimation();
 				progressDialog.dismiss();
 				comment_tv_no_comment.setText("网络连接错误");
 				comment_rel_no_comment.setVisibility(View.VISIBLE);
+				commentContentFlag = "nocontent";
 				break;
 			case COMMENT_LISTVIEW_FIRST_LOADING_NOCONTENT:
 				common_progress_dialog_iv_rotate.clearAnimation();
 				progressDialog.dismiss();
-				comment_tv_no_comment.setText("暂时没有跟帖，请写跟帖");
+				comment_tv_no_comment.setText("暂时没有评论，请写评论");
 				comment_rel_no_comment.setVisibility(View.VISIBLE);
+				commentContentFlag = "nocontent";
 				break;
 				
 			}

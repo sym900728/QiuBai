@@ -31,6 +31,7 @@ public class CommonRefreshListView extends ListView implements OnScrollListener{
 	private boolean isScrollToBottom, isLoadingMore = false;
 	private OnRefreshListener onRefreshListener;
 	private Bitmap bitmap_min, bitmap_clock_bg;
+	private String direction = null;
 	
 	private final static int REFRESH_PULL_DOWN = 0;
 	private final static int REFRESH_RELEASE = 1;
@@ -182,6 +183,11 @@ public class CommonRefreshListView extends ListView implements OnScrollListener{
 		case MotionEvent.ACTION_MOVE:
 			int touchMoveY = (int) ev.getY();
 			int paddingTop = (int)(touchMoveY - pressDownY)/3;
+			if(touchMoveY <= pressDownY){
+				direction = "move up";
+			} else {
+				direction = "move down";
+			}
 			if(firstVisibleItemPosition == 0 && currentState == REFRESH_PULL_DOWN){
 				if(pressDownFirstItemVisible){
 					if(paddingTop >= 0){// pull down
@@ -251,7 +257,11 @@ public class CommonRefreshListView extends ListView implements OnScrollListener{
 		//System.out.println("firstVisibleItemPosition:" + firstVisibleItemPosition);
 		firstVisibleItemPosition = firstVisibleItem;
 		if (getLastVisiblePosition() == (totalItemCount - 1)) {
-			isScrollToBottom = true;
+			if("move up".equals(direction)){
+				isScrollToBottom = true;
+			} else {
+				isScrollToBottom = false;
+			}
 		} else {
 			isScrollToBottom = false;
 		}
