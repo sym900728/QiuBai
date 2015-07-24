@@ -71,7 +71,22 @@ public class NovelService {
 				list.add(novel);
 			}
 		} catch (JSONException e) {
-			e.printStackTrace();
+			try {
+				JSONObject jsonObject = new JSONObject(json);
+				JSONObject jsonObject2 = jsonObject.getJSONObject("novel");
+				Novel novel = new Novel();
+				novel.setBelong(jsonObject2.getString("belong"));
+				novel.setId(jsonObject2.getInt("id"));
+				novel.setComments(jsonObject2.getInt("comments"));
+				novel.setDescription(jsonObject2.getString("description"));
+				novel.setContent(jsonObject2.getString("content"));
+				novel.setImage(jsonObject2.getString("image"));
+				novel.setTime(jsonObject2.getString("time"));
+				novel.setTitle(jsonObject2.getString("title"));
+				list.add(novel);
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			}
 		}
 		return list;
 	}
@@ -79,7 +94,7 @@ public class NovelService {
 	public Bitmap getImage(String uri){
 		Bitmap bitmap = null;
 		try {
-			HttpGet get = new HttpGet(StringUtil.changeBackslashToSlash(uri)); 
+			HttpGet get = new HttpGet(StringUtil.changeBackslashToSlash(uri));
 			HttpClient client = new DefaultHttpClient();
 			HttpResponse response = client.execute(get);
 			if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){

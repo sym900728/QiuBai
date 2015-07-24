@@ -24,6 +24,8 @@ import android.widget.TextView;
 
 import com.qiubai.entity.Novel;
 import com.qiubai.service.NovelService;
+import com.qiubai.util.BitmapUtil;
+import com.qiubai.util.DensityUtil;
 import com.qiubai.view.CommonRefreshListView;
 import com.qiubai.view.CommonRefreshListView.OnRefreshListener;
 
@@ -127,7 +129,7 @@ public class NovelsFragment extends Fragment implements OnRefreshListener{
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			convertView = inflater.inflate(R.layout.novels_listview_item, null);
-			System.out.println("position: " + position);
+			//System.out.println("position: " + position);
 			Novel novel = novels.get(position);
 			novels_listview_item_tv_title = (TextView) convertView.findViewById(R.id.novels_listview_item_tv_title);
 			novels_listview_item_tv_title.setText(novel.getTitle());
@@ -145,6 +147,11 @@ public class NovelsFragment extends Fragment implements OnRefreshListener{
 		
 	}
 	
+	/**
+	 * get novel image
+	 * @param url
+	 * @param iv
+	 */
 	public void getImage(final String url, final ImageView iv){
 		new Thread(){
 			public void run() {
@@ -153,7 +160,7 @@ public class NovelsFragment extends Fragment implements OnRefreshListener{
 					novelsHandler.post(new Runnable() {
 						@Override
 						public void run() {
-							iv.setImageBitmap(bitmap);
+							iv.setImageBitmap(BitmapUtil.resizeBitmap(DensityUtil.dip2px(NovelsFragment.this.getActivity(), 80), DensityUtil.dip2px(NovelsFragment.this.getActivity(), 80),bitmap));
 						}
 					});
 				}

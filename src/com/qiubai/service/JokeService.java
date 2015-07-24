@@ -52,7 +52,7 @@ public class JokeService {
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
-		}
+		} 
 		return list;
 	}
 	

@@ -5,7 +5,7 @@
     android:background="@color/comment_activity_bg_color" >
 
     <RelativeLayout
-        android:id="@+id/comment_lin_edit"
+        android:id="@+id/comment_rel_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -45,7 +45,7 @@
         android:id="@+id/comment_rel_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/comment_lin_edit"
+        android:layout_above="@id/comment_rel_edit"
         android:visibility="invisible" >
 
         <include layout="@layout/common_refresh_listview_header_hidden" />
@@ -59,10 +59,18 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/comment_rel_reply_fade"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_above="@id/comment_rel_edit"
+        android:background="@drawable/comment_reply_fade" >
+    </RelativeLayout>
+    
+    <RelativeLayout
         android:id="@+id/comment_rel_no_comment"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_alignParentTop="true"
+        android:layout_height="match_parent"
+        android:layout_above="@id/comment_rel_reply_fade"
         android:visibility="invisible" >
 
         <TextView
@@ -70,13 +78,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_above="@id/comment_lin_edit"
-        android:background="@drawable/comment_reply_fade" >
     </RelativeLayout>
 
 </RelativeLayout>

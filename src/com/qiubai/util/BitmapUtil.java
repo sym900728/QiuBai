@@ -24,22 +24,16 @@ public class BitmapUtil {
 		float scaleY = ((float) boxHeight) / ((float) bitmap.getHeight());
 		float scale = 1.0f;
 
-		if ((scaleX >= scaleY && scaleY >= 1.0f)
-				|| (scaleX > scaleY && scaleX < 1.0f)
-				|| (scaleX >= 1.0f && scaleY < 1.0f)) {
+		if ((scaleX >= scaleY && scaleY >= 1.0f) || (scaleX > scaleY && scaleX < 1.0f) || (scaleX >= 1.0f && scaleY < 1.0f)) {
 			scale = scaleX;
 		}
-		if ((scaleY > scaleX && scaleX >= 1.0f)
-				|| (scaleY > scaleX && scaleY < 1.0f)
-				|| (scaleX < 1.0f && scaleY >= 1.0f)) {
+		if ((scaleY > scaleX && scaleX >= 1.0f) || (scaleY > scaleX && scaleY < 1.0f) || (scaleX < 1.0f && scaleY >= 1.0f)) {
 			scale = scaleY;
 		}
 		Matrix matrix = new Matrix();
 		matrix.postScale(scale, scale);
-		Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-				bitmap.getHeight(), matrix, true);
-		Bitmap alterBitmap = Bitmap.createBitmap(newBitmap, 0, 0, boxWidth,
-				boxHeight);
+		Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+		Bitmap alterBitmap = Bitmap.createBitmap(newBitmap, 0, 0, boxWidth, boxHeight);
 		return alterBitmap;
 	}
 

@@ -30,12 +30,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.bt.qiubai.CharacterDetailActivity"
-            android:label="@string/title_activity_cd"
-            android:screenOrientation="portrait"
-            android:theme="@style/CommonTitleBarStyle2" >
-        </activity>
         <activity 
             android:name="com.bt.qiubai.JokeActivity"
             android:label="@string/title_activity_joke"
