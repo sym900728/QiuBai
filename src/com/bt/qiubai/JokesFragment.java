@@ -16,16 +16,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qiubai.entity.Joke;
-import com.qiubai.entity.Novel;
 import com.qiubai.service.JokeService;
 import com.qiubai.view.CommonRefreshListView;
 import com.qiubai.view.CommonRefreshListView.OnRefreshListener;
-import com.qiubai.view.TestListView;
 
 public class JokesFragment extends Fragment implements OnRefreshListener{
 	

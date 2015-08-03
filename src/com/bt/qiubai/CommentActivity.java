@@ -84,6 +84,7 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 	private final static int COMMENT_LISTVIEW_FIRST_LOADING_NOCONTENT = 12;
 	private final static String COMMENT_LISTVIEW_SIZE = "10";
 	
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

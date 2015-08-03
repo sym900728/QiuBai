@@ -3,6 +3,7 @@ package com.bt.qiubai;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -25,9 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
 import com.qiubai.entity.Joke;
-import com.qiubai.service.CommentService;
 import com.qiubai.service.JokeService;
 import com.qiubai.util.DensityUtil;
 import com.qiubai.util.SharedPreferencesUtil;
@@ -461,6 +460,7 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 		}
 	};
 	
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		return gestureDetector.onTouchEvent(event);

@@ -12,7 +12,7 @@
         android:id="@+id/pictures_listview_item_rel_first"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:background="@drawable/base_white_bg"
+        android:background="@drawable/common_white_bg"
         >
         <ImageView 
             android:layout_width="match_parent"
