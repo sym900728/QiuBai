@@ -47,7 +47,8 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		main_viewpager_title_rel_novel, main_viewpager_title_rel_diy;
 	private RelativeLayout main_drawer_right, main_drawer_left, main_drawer_left_rel_hot, 
 		main_drawer_left_rel_character, main_drawer_left_rel_picture;
-	private LinearLayout main_drawer_right_lin_comment, main_drawer_right_lin_collect, lin_weather, lin_setting;
+	private LinearLayout main_drawer_right_lin_comment, main_drawer_right_lin_collect;
+	private LinearLayout main_action_bar_lin_setting;
 	private ImageView main_viewpager_title_iv_picture, main_viewpager_title_iv_joke, main_viewpager_title_iv_novel,
 		main_viewpager_title_iv_diy, main_drawer_right_iv_avatar, title_menu_avator;
 	private TextView main_viewpager_title_tv_picture, main_viewpager_title_tv_joke, main_viewpager_title_tv_novel,
@@ -230,22 +231,13 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 			break;
 		case R.id.main_drawer_right_lin_collect:
 			break;
-		case R.id.main_menu_action_weather_lin:
-			//点击天气
-			//rightDialog.dismiss();
-			//Intent intent_weather = new Intent(MainActivity.this, WeatherActivity.class);
-			//startActivity(intent_weather);
-			//Toast.makeText(MainActivity.this, "今天天气晴朗", Toast.LENGTH_SHORT).show();
-			break;
-		case R.id.main_menu_action_setting_lin:
+		case R.id.main_action_bar_lin_setting:
 			//点击设置
 			rightDialog.dismiss();
 			Toast.makeText(MainActivity.this, "点击设置，准备跳转", Toast.LENGTH_SHORT).show();
 			break;
 		}
 	}
-	
-	
 	
 	/**
 	 * main DrawerListener
@@ -346,13 +338,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	 */
 	private void initTitleDialog() {
 		rightDialog = new Dialog(MainActivity.this, R.style.CommonActionDialog);
-		rightDialog.setContentView(R.layout.main_menu_action_bar);
+		rightDialog.setContentView(R.layout.main_action_bar);
 		rightDialog.getWindow().setGravity(Gravity.RIGHT | Gravity.TOP);
-		lin_weather = (LinearLayout) rightDialog.findViewById(R.id.main_menu_action_weather_lin);
-		lin_setting = (LinearLayout) rightDialog.findViewById(R.id.main_menu_action_setting_lin);
-		text_weather = (TextView) rightDialog.findViewById(R.id.main_menu_action_weather);
-		lin_weather.setOnClickListener(this);
-		lin_setting.setOnClickListener(this);
+		main_action_bar_lin_setting = (LinearLayout) rightDialog.findViewById(R.id.main_action_bar_lin_setting);
+		main_action_bar_lin_setting.setOnClickListener(this);
 	}
 	
 	/**
