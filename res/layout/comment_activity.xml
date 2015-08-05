@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="40dp"
             android:background="@null"
-            android:hint="写评论"
+            android:hint="@string/comment_write_comment_str"
             android:inputType="textMultiLine"
             android:maxLength="500"
             android:maxLines="3"
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="发送"
+            android:text="@string/comment_send_comment_str"
             android:textColor="@color/comment_send_disable_text_color"
             android:textSize="16sp" />
     </RelativeLayout>

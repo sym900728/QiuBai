@@ -299,6 +299,9 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 		}.start();
 	}
 
+	/**
+	 * loading more comments
+	 */
 	@Override
 	public void onLoadingMore() {
 		new Thread(){

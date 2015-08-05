@@ -17,6 +17,8 @@
     
     <!-- Comment Activity -->
     <string name="title_activity_comment">CommentActivity</string>
+    <string name="comment_write_comment_str">写评论</string>
+    <string name="comment_send_comment_str">发送</string>
 
     <!-- PictureText Activity -->
     <string name="title_activity_picture_text">PictureTextActivity</string>
@@ -39,13 +41,4 @@
     <!-- FirstEnter Activity -->
     <string name="title_activity_first_enter">FirstEnterActivity</string>
     
-    <!-- fragment_character_listview_footer.xml -->
-    <string name="character_load_full">已加载全部</string>
-    <string name="character_no_date">暂无数据</string>
-    <string name="character_more">加载中</string>
-    
-    <!-- weather_main.xml -->
-    <string name="weather_from">数据来源中国天气</string>
-    
-
 </resources>

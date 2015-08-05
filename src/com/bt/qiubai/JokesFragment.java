@@ -221,7 +221,6 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 					Message msg = jokesHandler.obtainMessage(JOKES_LISTVIEW_REFRESH_LOADING_MORE_ERROR);
 					jokesHandler.sendMessage(msg);
 				} else {
-					System.out.println("ok");
 					List<Joke> list = jokeService.parseJokesJson(result);
 					Message msg = jokesHandler.obtainMessage(JOKES_LISTVIEW_REFRESH_LOADING_MORE_SUCCESS);
 					msg.obj = list;
