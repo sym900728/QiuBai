@@ -20,8 +20,8 @@
     <string name="comment_write_comment_str">写评论</string>
     <string name="comment_send_comment_str">发送</string>
 
-    <!-- PictureText Activity -->
-    <string name="title_activity_picture_text">PictureTextActivity</string>
+    <!-- Picture Activity -->
+    <string name="picture_activity_title_str">PictureActivity</string>
 
     <!-- Login Activity -->
     <string name="title_activity_login">LoginActivity</string>

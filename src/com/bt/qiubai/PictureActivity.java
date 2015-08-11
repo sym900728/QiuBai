@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -19,41 +20,49 @@ import android.widget.RelativeLayout;
 
 public class PictureActivity extends Activity implements OnClickListener{
 	
-	private RelativeLayout pt_title_back,pt_title_menu;
-	private LinearLayout action_share,action_comment;
+	private RelativeLayout picture_title_back, picture_title_action_bar;
+	private RelativeLayout picture_title_rel_comment;
+	private LinearLayout picture_action_share, picture_action_collect, picture_action_comment;
 	
-	private ViewPager viewpager;
+	
+	private int picture_id = 0;
+	
+	private ViewPager picture_viewpager;
 	private List<View> list;  //表示装载滑动的布局
 	private MyPagerAdpater myPagerAdpater;
 	
-	private Dialog actionDialog;
+	private Dialog pictureActionDialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.picture_activity);
 		
-		pt_title_back = (RelativeLayout) findViewById(R.id.pt_title_back);
-		pt_title_menu = (RelativeLayout) findViewById(R.id.pt_title_action_bar);
-		pt_title_back.setOnClickListener(this);
-		pt_title_menu.setOnClickListener(this);
+		picture_title_back = (RelativeLayout) findViewById(R.id.picture_title_back);
+		picture_title_rel_comment = (RelativeLayout) findViewById(R.id.picture_title_rel_comment);
+		picture_title_action_bar = (RelativeLayout) findViewById(R.id.picture_title_action_bar);
+		picture_title_back.setOnClickListener(this);
+		picture_title_rel_comment.setOnClickListener(this);
+		picture_title_action_bar.setOnClickListener(this);
 		
-		actionDialog = new Dialog(PictureActivity.this, R.style.CommonActionDialog);
-		actionDialog.setContentView(R.layout.common_action_bar);
-		actionDialog.getWindow().setGravity(Gravity.RIGHT | Gravity.TOP);
+		pictureActionDialog = new Dialog(PictureActivity.this, R.style.CommonActionDialog);
+		pictureActionDialog.setContentView(R.layout.picture_action_bar);
+		pictureActionDialog.getWindow().setGravity(Gravity.RIGHT | Gravity.TOP);
 		
-		action_share = (LinearLayout) actionDialog.findViewById(R.id.common_action_share);
-		action_comment = (LinearLayout) actionDialog.findViewById(R.id.common_action_comment);
-		action_share.setOnClickListener(this);
-		action_comment.setOnClickListener(this);
+		picture_action_share = (LinearLayout) pictureActionDialog.findViewById(R.id.picture_action_share);
+		picture_action_collect = (LinearLayout) pictureActionDialog.findViewById(R.id.picture_action_collect);
+		picture_action_comment = (LinearLayout) pictureActionDialog.findViewById(R.id.picture_action_comment);
+		picture_action_share.setOnClickListener(this);
+		picture_action_collect.setOnClickListener(this);
+		picture_action_comment.setOnClickListener(this);
 		
-		viewpager = (ViewPager) findViewById(R.id.pt_viewpager);
+		picture_viewpager = (ViewPager) findViewById(R.id.picture_viewpager);
 		createImageView();
 		
 		myPagerAdpater = new MyPagerAdpater();
-		viewpager.setAdapter(myPagerAdpater);
+		picture_viewpager.setAdapter(myPagerAdpater);
 		
-		viewpager.setOnPageChangeListener(new OnPageChangeListener() {
+		picture_viewpager.setOnPageChangeListener(new OnPageChangeListener() {
 			
 			@Override
 			public void onPageSelected(int arg0) {
@@ -116,27 +125,39 @@ public class PictureActivity extends Activity implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.pt_title_back:
+		case R.id.picture_title_back:
 			PictureActivity.this.finish();
 			overridePendingTransition(R.anim.stay_in_place, R.anim.out_to_right);
 			break;
-		case R.id.pt_title_action_bar:
-			actionDialog.show();
+			
+		case R.id.picture_title_rel_comment:
+			Intent intent_to_comment1 = new Intent(PictureActivity.this, CommentActivity.class);
+			intent_to_comment1.putExtra("belong", "picture");
+			intent_to_comment1.putExtra("newsid", picture_id);
+			startActivity(intent_to_comment1);
+			overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
 			break;
 			
-		case R.id.common_action_share:
-			actionDialog.dismiss();
+		case R.id.picture_title_action_bar:
+			pictureActionDialog.show();
 			break;
 			
-		case R.id.common_action_comment:
-			actionDialog.dismiss();
-			Intent intent = new Intent(PictureActivity.this, CommentActivity.class);
-			startActivity(intent);
+		case R.id.picture_action_share:
+			pictureActionDialog.dismiss();
+			break;
+			
+		case R.id.picture_action_collect:
+			pictureActionDialog.dismiss();
+			break;
+			
+		case R.id.picture_action_comment:
+			pictureActionDialog.dismiss();
+			Intent intent_to_comment2 = new Intent(PictureActivity.this, CommentActivity.class);
+			intent_to_comment2.putExtra("belong", "picture");
+			intent_to_comment2.putExtra("newsid", picture_id);
+			startActivity(intent_to_comment2);
 			overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
 			break;
 		}
 	}
-
-	
-	
 }

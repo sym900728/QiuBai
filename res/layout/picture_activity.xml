@@ -9,7 +9,7 @@
         android:layout_height="match_parent" >
 
         <android.support.v4.view.ViewPager
-            android:id="@+id/pt_viewpager"
+            android:id="@+id/picture_viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
         </android.support.v4.view.ViewPager>
@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:text="这个是标题"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/common_white_color"
                     android:textSize="15sp" />
 
                 <TextView
@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:text="1/4"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/common_white_color"
                     android:textSize="16sp" />
             </RelativeLayout>
 
@@ -59,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:lineSpacingMultiplier="1.3"
                     android:text="2009年，25岁的广西小伙朱某某被派往古巴学习临床医学，是享受古巴政府单方奖学金的国家公派留学生。他称自己在古巴海边认识了不少渔民，用自己从国内带的风油精等小物品换了不少玳瑁背甲壳。2013年7月27日，朱某某从古巴回国内度假时带了一些玳瑁背甲壳。他转机到成都双流国际机场，准备看望女友。出关时，朱某某选择无申报通道入境。机场海关官员对他携带的行李进行X光检查，发现有疑似玳瑁背甲壳的物品，遂将其拦下，并将这些物品扣押。朱某某很惊讶，他认为自己是帮别人带的，而且这些玳瑁背甲壳在古巴并不是很值钱。经鉴定，朱某某携带的玳瑁背甲壳共165块，净重18.4千克，价值人民币18.72万元。"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/common_white_color"
                     android:textSize="15sp" />
             </ScrollView>
         </LinearLayout>

@@ -67,8 +67,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	
 	private boolean isMainDrawerLeftOpen = false, isMainDrawerRightOpen = false;
 	private boolean isMainDrawerRightSet = false;
-	private final static int WEATHER = 1; 
-	private final static int EXIT = 2; 
+	private final static int EXIT = 1; 
 	private static boolean isExit = false; // 定义变量，判断是否退出
 	
 	@Override

@@ -15,6 +15,7 @@ import com.qiubai.view.CommonRefreshListView.OnRefreshListener;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
@@ -246,7 +247,7 @@ public class PicturesFragment extends Fragment implements OnRefreshListener{
 			pictures_listview_item_first_rel_1.setLayoutParams(lp_pictures_listview_item_first_rel_1);
 			
 			ImageView pictures_listview_item_first_iv_1 = (ImageView) convertView.findViewById(R.id.pictures_listview_item_first_iv_1);
-			pictures_listview_item_first_iv_1.setImageBitmap(BitmapUtil.resizeBitmap(lp_pictures_listview_item_first_rel_1.width, lp_pictures_listview_item_first_rel_1.height, BitmapFactory.decodeResource(getResources(), R.drawable.pt_test1)));
+			getImage(1, lp_pictures_listview_item_first_rel_1.width, lp_pictures_listview_item_first_rel_1.height, picture.getImage(), pictures_listview_item_first_iv_1);
 			
 			// the right top image (number : 2)
 			RelativeLayout pictures_listview_item_first_rel_2 = (RelativeLayout) convertView.findViewById(R.id.pictures_listview_item_first_rel_2);
@@ -256,7 +257,7 @@ public class PicturesFragment extends Fragment implements OnRefreshListener{
 			pictures_listview_item_first_rel_2.setLayoutParams(lp_pictures_listview_item_first_rel_2);
 			
 			ImageView pictures_listview_item_first_iv_2 = (ImageView) convertView.findViewById(R.id.pictures_listview_item_first_iv_2);
-			pictures_listview_item_first_iv_2.setImageBitmap(BitmapUtil.resizeBitmap(lp_pictures_listview_item_first_rel_2.width, lp_pictures_listview_item_first_rel_2.height, BitmapFactory.decodeResource(getResources(), R.drawable.pt_test2)));
+			getImage(2, lp_pictures_listview_item_first_rel_2.width, lp_pictures_listview_item_first_rel_2.height, picture.getImage(), pictures_listview_item_first_iv_2);
 			
 			// the right bottom image (number : 3)
 			RelativeLayout pictures_listview_item_first_rel_3 = (RelativeLayout) convertView.findViewById(R.id.pictures_listview_item_first_rel_3);
@@ -266,10 +267,10 @@ public class PicturesFragment extends Fragment implements OnRefreshListener{
 			pictures_listview_item_first_rel_3.setLayoutParams(lp_pictures_listview_item_first_rel_3);
 			
 			ImageView pictures_listview_item_first_iv_3 = (ImageView) convertView.findViewById(R.id.pictures_listview_item_first_iv_3);
-			pictures_listview_item_first_iv_3.setImageBitmap(BitmapUtil.resizeBitmap(lp_pictures_listview_item_first_rel_3.width, lp_pictures_listview_item_first_rel_3.height, BitmapFactory.decodeResource(getResources(), R.drawable.pt_test3)));
+			getImage(3, lp_pictures_listview_item_first_rel_3.width, lp_pictures_listview_item_first_rel_3.height, picture.getImage(), pictures_listview_item_first_iv_3);
 			
 			TextView pictures_listview_item_first_tv_title = (TextView) convertView.findViewById(R.id.pictures_listview_item_first_tv_title);
-			pictures_listview_item_first_tv_title.setText("就是这个标题");
+			pictures_listview_item_first_tv_title.setText(picture.getTitle());
 			
 		} else if (picture.getId() % 2 == 0){
 			convertView = inflater.inflate(R.layout.pictures_listview_item_two, null);
@@ -280,9 +281,9 @@ public class PicturesFragment extends Fragment implements OnRefreshListener{
 			pictures_listview_item_two_rel.setLayoutParams(lp_pictures_listview_item_two_rel);
 			
 			ImageView pictures_listview_item_two_iv_1 = (ImageView) convertView.findViewById(R.id.pictures_listview_item_two_iv_1);
-			pictures_listview_item_two_iv_1.setImageBitmap(BitmapUtil.resizeBitmap(lp_pictures_listview_item_two_rel.width, lp_pictures_listview_item_two_rel.height, BitmapFactory.decodeResource(getResources(), R.drawable.pt_test)));
+			getImage(1, lp_pictures_listview_item_two_rel.width, lp_pictures_listview_item_two_rel.height, picture.getImage(), pictures_listview_item_two_iv_1);
 			TextView pictures_listview_item_two_tv_title = (TextView) convertView.findViewById(R.id.pictures_listview_item_two_tv_title);
-			pictures_listview_item_two_tv_title.setText("就是这个标题");
+			pictures_listview_item_two_tv_title.setText(picture.getTitle());
 			
 		} else if (picture.getId() % 4 == 3){
 			convertView = inflater.inflate(R.layout.pictures_listview_item_three, null);
@@ -295,7 +296,7 @@ public class PicturesFragment extends Fragment implements OnRefreshListener{
 			pictures_listview_item_three_rel_1.setLayoutParams(lp_pictures_listview_item_three_rel_1);
 						
 			ImageView pictures_listview_item_three_iv_1 = (ImageView) convertView.findViewById(R.id.pictures_listview_item_three_iv_1);
-			pictures_listview_item_three_iv_1.setImageBitmap(BitmapUtil.resizeBitmap(lp_pictures_listview_item_three_rel_1.width, lp_pictures_listview_item_three_rel_1.height, BitmapFactory.decodeResource(getResources(), R.drawable.pt_test1)));
+			getImage(1, lp_pictures_listview_item_three_rel_1.width, lp_pictures_listview_item_three_rel_1.height, picture.getImage(), pictures_listview_item_three_iv_1);
 						
 			// the left bottom image (number : 2)
 			RelativeLayout pictures_listview_item_three_rel_2 = (RelativeLayout) convertView.findViewById(R.id.pictures_listview_item_three_rel_2);
@@ -305,7 +306,7 @@ public class PicturesFragment extends Fragment implements OnRefreshListener{
 			pictures_listview_item_three_rel_2.setLayoutParams(lp_pictures_listview_item_three_rel_2);
 						
 			ImageView pictures_listview_item_three_iv_2 = (ImageView) convertView.findViewById(R.id.pictures_listview_item_three_iv_2);
-			pictures_listview_item_three_iv_2.setImageBitmap(BitmapUtil.resizeBitmap(lp_pictures_listview_item_three_rel_2.width, lp_pictures_listview_item_three_rel_2.height, BitmapFactory.decodeResource(getResources(), R.drawable.pt_test2)));
+			getImage(2, lp_pictures_listview_item_three_rel_2.width, lp_pictures_listview_item_three_rel_2.height, picture.getImage(), pictures_listview_item_three_iv_2);
 						
 			// the right image (number : 3)
 			RelativeLayout pictures_listview_item_three_rel_3 = (RelativeLayout) convertView.findViewById(R.id.pictures_listview_item_three_rel_3);
@@ -315,12 +316,30 @@ public class PicturesFragment extends Fragment implements OnRefreshListener{
 			pictures_listview_item_three_rel_3.setLayoutParams(lp_pictures_listview_item_three_rel_3);
 						
 			ImageView pictures_listview_item_three_iv_3 = (ImageView) convertView.findViewById(R.id.pictures_listview_item_three_iv_3);
-			pictures_listview_item_three_iv_3.setImageBitmap(BitmapUtil.resizeBitmap(lp_pictures_listview_item_three_rel_3.width, lp_pictures_listview_item_three_rel_3.height, BitmapFactory.decodeResource(getResources(), R.drawable.pt_test3)));
+			getImage(3, lp_pictures_listview_item_three_rel_3.width, lp_pictures_listview_item_three_rel_3.height, picture.getImage(), pictures_listview_item_three_iv_3);
 						
 			TextView pictures_listview_item_three_tv_title = (TextView) convertView.findViewById(R.id.pictures_listview_item_three_tv_title);
-			pictures_listview_item_three_tv_title.setText("就是这个标题");
+			pictures_listview_item_three_tv_title.setText(picture.getTitle());
 		}
 		return convertView;
+	}
+
+	private void getImage(final int num, final int width, final int height, String image, final ImageView iv) {
+		iv.setImageBitmap(BitmapUtil.resizeBitmap(width, height, BitmapFactory.decodeResource(getResources(), R.drawable.common_listview_item_image_default)));
+		final String[] uri = image.split(",");
+		new Thread(){
+			public void run() {
+				final Bitmap bitmap = pictureService.getImage(uri[num - 1]);
+				if(bitmap != null){
+					picturesHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							iv.setImageBitmap(BitmapUtil.resizeBitmap(width, height, bitmap));
+						}
+					});
+				}
+			};
+		}.start();
 	}
 	
 }

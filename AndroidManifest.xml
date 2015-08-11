@@ -20,22 +20,27 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.bt.qiubai.MainActivity"
+            android:hardwareAccelerated="true"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/CommonTitleBarStyle"
-            android:hardwareAccelerated="true" >
+            android:theme="@style/CommonTitleBarStyle" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity 
+        <activity
+            android:name="com.bt.qiubai.PictureActivity"
+            android:label="@string/picture_activity_title_str"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
+        </activity>
+        <activity
             android:name="com.bt.qiubai.JokeActivity"
             android:label="@string/title_activity_joke"
             android:screenOrientation="portrait"
-            android:theme="@style/CommonTitleBarStyle2"
-            >
+            android:theme="@style/CommonTitleBarStyle2" >
         </activity>
         <activity
             android:name="com.bt.qiubai.NovelActivity"
@@ -48,12 +53,6 @@
             android:label="@string/title_activity_comment"
             android:screenOrientation="portrait"
             android:theme="@style/CommonTitleBarStyle2" >
-        </activity>
-        <activity
-            android:name="com.bt.qiubai.PictureTextActivity"
-            android:label="@string/title_activity_picture_text"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
             android:name="com.bt.qiubai.LoginActivity"
