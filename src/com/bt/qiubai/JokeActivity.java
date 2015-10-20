@@ -52,7 +52,7 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 	private GestureDetector gestureDetector;
 	private int joke_id;
 	private SharedPreferencesUtil spUtil = new SharedPreferencesUtil(JokeActivity.this);
-	private JokeService jokeService = new JokeService();
+	private JokeService jokeService;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +60,8 @@ public class JokeActivity extends Activity implements OnTouchListener, OnClickLi
 		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.joke_activity);
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,R.layout.joke_title);
+		
+		jokeService = new JokeService(JokeActivity.this);
 		
 		Intent intent = getIntent();
 		Joke joke = (Joke) intent.getSerializableExtra("joke");

@@ -3,6 +3,11 @@ package com.bt.qiubai;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.qiubai.entity.User;
+import com.qiubai.service.UserService;
+import com.qiubai.util.NetworkUtil;
+import com.qiubai.util.SharedPreferencesUtil;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -31,11 +36,6 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import com.qiubai.entity.User;
-import com.qiubai.service.UserService;
-import com.qiubai.util.NetworkUtil;
-import com.qiubai.util.SharedPreferencesUtil;
-
 public class LoginActivity extends Activity implements OnClickListener, OnTouchListener, OnFocusChangeListener{
 	
 	private RelativeLayout login_title_back;
@@ -47,8 +47,8 @@ public class LoginActivity extends Activity implements OnClickListener, OnTouchL
 	private ImageView common_progress_dialog_iv_rotate;
 	
 	private GestureDetector gestureDetector;
-	private UserService userService = new UserService();
 	private SharedPreferencesUtil spUtil = new SharedPreferencesUtil(LoginActivity.this);
+	private UserService userService;
 	
 	private Dialog progressDialog;
 	private Animation anim_rotate;
@@ -64,6 +64,8 @@ public class LoginActivity extends Activity implements OnClickListener, OnTouchL
 		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.login_activity);
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.login_title);  
+		
+		userService = new UserService(LoginActivity.this);
 		
 		if(!NetworkUtil.isConnectInternet(this)){
 			Toast.makeText(this, "您没有连接网络，请连接网络", Toast.LENGTH_SHORT).show();

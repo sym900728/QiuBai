@@ -1,7 +1,22 @@
 package com.bt.qiubai;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.qiubai.dao.NovelDao;
+import com.qiubai.dao.impl.NovelDaoImpl;
+import com.qiubai.entity.Novel;
+import com.qiubai.service.NovelService;
+import com.qiubai.util.CommonRefreshListViewAnimation;
+import com.qiubai.util.DensityUtil;
+import com.qiubai.util.NetworkUtil;
+import com.qiubai.util.PropertiesUtil;
+import com.qiubai.util.SharedPreferencesUtil;
+import com.qiubai.util.TimeUtil;
+import com.qiubai.view.CommonRefreshListView;
+import com.qiubai.view.CommonRefreshListView.OnRefreshListener;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -22,25 +37,21 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.qiubai.entity.Novel;
-import com.qiubai.service.NovelService;
-import com.qiubai.util.BitmapUtil;
-import com.qiubai.util.DensityUtil;
-import com.qiubai.view.CommonRefreshListView;
-import com.qiubai.view.CommonRefreshListView.OnRefreshListener;
-
 public class NovelsFragment extends Fragment implements OnRefreshListener{
 	
 	private RelativeLayout novels_rel_listview, crl_header_hidden;
-	private TextView novels_listview_item_tv_title, novels_listview_item_tv_description, novels_listview_item_tv_comment;
-	private ImageView novels_listview_item_iv_picture;
-	
 	private CommonRefreshListView novelsListView;
-	
 	private NovelsBaseAdapter novelsBaseAdapter;
 	
+	private int requireWidth, requireHeight;//图片框的大小
+	private Bitmap bitmap_default;
+	
 	private List<Novel> novels = new ArrayList<Novel>();
-	private NovelService novelService = new NovelService();
+	private Map<Integer, Bitmap> map = new HashMap<Integer, Bitmap>();
+	private NovelService novelService;
+	private PropertiesUtil propUtil;
+	private SharedPreferencesUtil spUtil;
+	private NovelDao novelDao;
 	
 	private final static int NOVELS_LISTVIEW_REFRESH_SUCCESS = 1;
 	private final static int NOVELS_LISTVIEW_REFRESH_NOCONTENT = 2;
@@ -52,14 +63,26 @@ public class NovelsFragment extends Fragment implements OnRefreshListener{
 	private final static int NOVELS_LISTVIEW_FIRST_LOADING_ERROR = 8;
 	private final static int NOVELS_LISTVIEW_FIRST_LOADING_NOCONTENT = 9;
 	private final static String NOVELS_LISTVIEW_SIZE = "10";
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view_novels = inflater.inflate(R.layout.novels_fragment, container, false);
+		
+		novelService = new NovelService(this.getActivity());
+		propUtil = new PropertiesUtil(getActivity());
+		spUtil = new SharedPreferencesUtil(this.getActivity());
+		novelDao = new NovelDaoImpl(this.getActivity());
+		
+		requireWidth = DensityUtil.dip2px(NovelsFragment.this.getActivity(), 80);
+		requireHeight = DensityUtil.dip2px(NovelsFragment.this.getActivity(), 80);
+		bitmap_default = BitmapFactory.decodeResource(getResources(), R.drawable.common_listview_item_image_default);
+		
 		novels_rel_listview = (RelativeLayout) view_novels.findViewById(R.id.novels_rel_listview);
 		crl_header_hidden = (RelativeLayout) view_novels.findViewById(R.id.crl_header_hidden);
-		novelsBaseAdapter = new NovelsBaseAdapter(this.getActivity());
+		
 		novelsListView = (CommonRefreshListView) view_novels.findViewById(R.id.novels_listview);
+		novelsBaseAdapter = new NovelsBaseAdapter(this.getActivity());
 		novelsListView.setAdapter(novelsBaseAdapter);
 		novelsListView.setHiddenView(crl_header_hidden);
 		novelsListView.setOnRefreshListener(this);
@@ -78,9 +101,44 @@ public class NovelsFragment extends Fragment implements OnRefreshListener{
 				getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
 			}
 		});
-		onFirstLoadingNovels();
+		loadDatabaseData();
 		return view_novels;
 	}
+	
+	public void loadNovelsDataTimer(){
+		//判断是否联网
+		if(NetworkUtil.isConnectInternet(this.getActivity())){
+			//判断是不是第一次运行 NovelsFragment
+			if(spUtil.isFirstRun("isNovelsFragmentFirstRun")){
+				onFirstLoadingNovels();
+			} else {
+				//比较时间
+				if(TimeUtil.compareTime(spUtil.getRefreshTime("novelsFragmentLastRefreshTime"))){
+					CommonRefreshListViewAnimation.moveListView(novelsListView, "novelsFragmentLastRefreshTime");
+				}
+			}
+		}
+	}
+	
+	public void loadDatabaseData(){
+		novels.clear();
+		novels = novelDao.getNovels(null);
+		if(!novels.isEmpty()){
+			novelsBaseAdapter.notifyDataSetChanged();
+			novelsListView.setLastUpdateTime("novelsFragmentLastRefreshTime");
+			novels_rel_listview.setVisibility(View.VISIBLE);
+		}
+	}
+	
+	public void setDatabaseData(final List<Novel> list){
+		new Thread(){
+			public void run() {
+				novelDao.emptyNovelTable();
+				novelDao.addNovels(list);
+			};
+		}.start();
+	}
+	
 	
 	public void onFirstLoadingNovels(){
 		novels_rel_listview.setVisibility(View.INVISIBLE);
@@ -126,25 +184,43 @@ public class NovelsFragment extends Fragment implements OnRefreshListener{
 			return 0;
 		}
 
+		/**
+		 * getView 方法中不要有调整图像大小的代码（可以放在子线程中）
+		 */
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			convertView = inflater.inflate(R.layout.novels_listview_item, null);
-			//System.out.println("position: " + position);
+			
+			ViewHolder viewHolder = null;
+			
+			if(convertView == null){
+				convertView = inflater.inflate(R.layout.novels_listview_item, null);
+				viewHolder = new ViewHolder();
+				viewHolder.novels_listview_item_tv_title = (TextView) convertView.findViewById(R.id.novels_listview_item_tv_title);
+				viewHolder.novels_listview_item_tv_description = (TextView) convertView.findViewById(R.id.novels_listview_item_tv_description);
+				viewHolder.novels_listview_item_tv_comment = (TextView) convertView.findViewById(R.id.novels_listview_item_tv_comment);
+				viewHolder.novels_listview_item_iv_picture = (ImageView) convertView.findViewById(R.id.novels_listview_item_iv_picture);
+				convertView.setTag(viewHolder);
+			} else {
+				viewHolder = (ViewHolder) convertView.getTag();
+			}
 			Novel novel = novels.get(position);
-			novels_listview_item_tv_title = (TextView) convertView.findViewById(R.id.novels_listview_item_tv_title);
-			novels_listview_item_tv_title.setText(novel.getTitle());
-			novels_listview_item_tv_description = (TextView) convertView.findViewById(R.id.novels_listview_item_tv_description);
-			novels_listview_item_tv_description.setText(novel.getDescription());
-			novels_listview_item_tv_comment = (TextView) convertView.findViewById(R.id.novels_listview_item_tv_comment);
-			novels_listview_item_tv_comment.setText(novel.getComments() + " 评论");
-			novels_listview_item_iv_picture = (ImageView) convertView.findViewById(R.id.novels_listview_item_iv_picture);
-			novels_listview_item_iv_picture.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.common_listview_item_image_default));
-			if(!"default".equals(novel.getImage())){
-				getImage(novel.getImage(), novels_listview_item_iv_picture);
+			viewHolder.novels_listview_item_tv_title.setText(novel.getTitle());
+			viewHolder.novels_listview_item_tv_description.setText(novel.getDescription());
+			viewHolder.novels_listview_item_tv_comment.setText(novel.getComments() + " 评论");
+			viewHolder.novels_listview_item_iv_picture.setImageBitmap(bitmap_default);
+			viewHolder.novels_listview_item_iv_picture.setTag(novel.getImage());
+			if(!"default".equals(novel.getImage()) && !"".equals(novel.getImage()) ){
+				loadImage(novel.getId(), novel.getImage(), viewHolder.novels_listview_item_iv_picture);
 			}
 			return convertView;
 		}
 		
+		private class ViewHolder{
+			TextView novels_listview_item_tv_title;
+			TextView novels_listview_item_tv_description;
+			TextView novels_listview_item_tv_comment;
+			ImageView novels_listview_item_iv_picture;
+		}
 	}
 	
 	/**
@@ -152,20 +228,46 @@ public class NovelsFragment extends Fragment implements OnRefreshListener{
 	 * @param url
 	 * @param iv
 	 */
-	public void getImage(final String url, final ImageView iv){
-		new Thread(){
-			public void run() {
-				final Bitmap bitmap = novelService.getImage(url);
-				if(bitmap != null){
-					novelsHandler.post(new Runnable() {
-						@Override
-						public void run() {
-							iv.setImageBitmap(BitmapUtil.resizeBitmap(DensityUtil.dip2px(NovelsFragment.this.getActivity(), 80), DensityUtil.dip2px(NovelsFragment.this.getActivity(), 80),bitmap));
-						}
-					});
-				}
-			};
-		}.start();
+	public void loadImage(final int id, final String url, final ImageView iv){
+		Bitmap bitmap = map.get(id);
+		if(bitmap != null){
+			iv.setImageBitmap(bitmap);
+		} else {
+			new Thread(){
+				public void run() {
+					final Bitmap bitmap2 = BitmapFactory.decodeFile(propUtil.readProperties("config.properties", "novels_picture_path") + "/" + id + ".png");
+					if(bitmap2 != null){
+						map.put(id, bitmap2);
+						novelsHandler.post(new Runnable() {
+							@Override
+							public void run() {
+								iv.setImageBitmap(bitmap2);
+							}
+						});
+					} else {
+						new Thread(){
+							public void run() {
+								final Bitmap bitmap3 = novelService.getImage(url);
+								if(bitmap3 != null){
+									novelService.storeImage(bitmap3, id + ".png");
+									map.put(id, bitmap3);
+									novelsHandler.post(new Runnable() {
+										@Override
+										public void run() {
+											String str = (String) iv.getTag();
+											if(url.equals(str)){
+												iv.setImageBitmap(bitmap3);
+											}
+										}
+									});
+								}
+							};
+						}.start();
+					}
+				};
+			}.start();
+		}
+		
 	}
 	
 	@SuppressLint("HandlerLeak")
@@ -173,32 +275,38 @@ public class NovelsFragment extends Fragment implements OnRefreshListener{
 		@SuppressWarnings("unchecked")
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case NOVELS_LISTVIEW_REFRESH_SUCCESS:
-				novelsListView.hiddenHeaderView(true);
+			case NOVELS_LISTVIEW_REFRESH_SUCCESS://下拉刷新数据成功
+				novelsListView.hiddenHeaderView();
 				novelsListView.hiddenFooterView(true);
 				novels.clear();
 				novels = (List<Novel>) msg.obj;
 				novelsBaseAdapter.notifyDataSetChanged();
+				novelsListView.updateLastUpdateTime("novelsFragmentLastRefreshTime");
+				setDatabaseData(novels);
 				break;
 			case NOVELS_LISTVIEW_REFRESH_NOCONTENT:
 				break;
 			case NOVELS_LISTVIEW_REFRESH_ERROR:
-				novelsListView.hiddenHeaderView(false);
+				novelsListView.hiddenHeaderView();
 				break;
-			case NOVELS_LISTVIEW_FIRST_LOADING_SUCCESS:
+			case NOVELS_LISTVIEW_FIRST_LOADING_SUCCESS://第一次加载数据成功
 				novels.clear();
 				novels =  (List<Novel>) msg.obj;
 				novelsBaseAdapter.notifyDataSetChanged();
+				novelsListView.updateLastUpdateTime("novelsFragmentLastRefreshTime");
 				novels_rel_listview.setVisibility(View.VISIBLE);
+				setDatabaseData(novels);
+				//storeBitmapToMap(novels);
 				break;
 			case NOVELS_LISTVIEW_FIRST_LOADING_NOCONTENT:
 				break;
 			case NOVELS_LISTVIEW_FIRST_LOADING_ERROR:
 				break;
-			case NOVELS_LISTVIEW_REFRESH_LOADING_MORE_SUCCESS:
+			case NOVELS_LISTVIEW_REFRESH_LOADING_MORE_SUCCESS://上拉加载更多数据成功
 				novelsListView.hiddenFooterView(true);
 				addToListNovels((List<Novel>) msg.obj);
 				novelsBaseAdapter.notifyDataSetChanged();
+				//storeBitmapToMap((List<Novel>) msg.obj);
 				break;
 			case NOVELS_LISTVIEW_REFRESH_LOADING_MORE_ERROR:
 				novelsListView.hiddenFooterView(true);
@@ -209,6 +317,22 @@ public class NovelsFragment extends Fragment implements OnRefreshListener{
 			}
 		};
 	};
+	
+	public void storeBitmapToMap(List<Novel> list){
+		for(final Novel novel : list){
+			if(!"default".equals(novel.getImage()) && !"".equals(novel.getImage())){
+				new Thread(){
+					public void run() {
+						Bitmap bitmap = novelService.getImage(novel.getImage());
+						if(bitmap != null){
+							map.put(novel.getId(), bitmap);
+							novelService.storeImage(bitmap, novel.getId() + ".png");
+						}
+					};
+				}.start();
+			}
+		}
+	}
 	
 	public void addToListNovels(List<Novel> list){
 		for(Novel novel : list){

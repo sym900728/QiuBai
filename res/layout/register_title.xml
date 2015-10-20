@@ -24,7 +24,7 @@
         android:layout_toRightOf="@id/register_title_back"
         android:layout_centerVertical="true"
         android:textSize="16sp"
-        android:textColor="@color/register_title_text_color"
+        android:textColor="@color/common_white_color"
         android:text="注册"
         />
 

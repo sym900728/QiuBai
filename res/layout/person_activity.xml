@@ -41,20 +41,20 @@
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/person_tv_account"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:text="test@163.com" />
+                android:layout_centerVertical="true" />
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/person_rel_header_icon"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:background="@drawable/common_layout_press_bg"
             android:paddingLeft="30dp"
-            android:paddingRight="20dp"
-            android:background="@drawable/common_layout_press_bg" >
+            android:paddingRight="20dp" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -64,34 +64,32 @@
                 android:text="头像"
                 android:textColor="#4A4A4A"
                 android:textSize="16sp" />
-            
-            <ImageView 
+
+            <ImageView
                 android:id="@+id/person_icon_iv_right_arrow"
                 android:layout_width="8dp"
                 android:layout_height="10.8dp"
-                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/person_right_arrow"
-                />
-            
+                android:layout_centerVertical="true"
+                android:src="@drawable/person_right_arrow" />
+
             <ImageView
                 android:id="@+id/person_iv_icon"
-                android:layout_toLeftOf="@id/person_icon_iv_right_arrow"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginRight="10dp"
                 android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@id/person_icon_iv_right_arrow"
                 android:src="@drawable/person_header_icon" />
-            
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/person_rel_nickname"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:background="@drawable/common_layout_press_bg"
             android:paddingLeft="30dp"
-            android:paddingRight="20dp"
-            android:background="@drawable/common_layout_press_bg" >
+            android:paddingRight="20dp" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -102,34 +100,33 @@
                 android:textColor="#4A4A4A"
                 android:textSize="16sp" />
 
-            <ImageView 
+            <ImageView
                 android:id="@+id/person_nickname_iv_right_arrow"
                 android:layout_width="8dp"
                 android:layout_height="10.8dp"
-                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/person_right_arrow"
-                />
-            
+                android:layout_centerVertical="true"
+                android:src="@drawable/person_right_arrow" />
+
             <TextView
                 android:id="@+id/person_tv_nickname"
-                android:layout_toLeftOf="@id/person_nickname_iv_right_arrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
                 android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@id/person_nickname_iv_right_arrow"
                 android:textColor="#4A4A4A"
                 android:textSize="16sp" />
         </RelativeLayout>
-        
+
         <RelativeLayout
             android:id="@+id/person_rel_password"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:paddingLeft="30dp"
-            android:paddingRight="20dp"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/common_layout_press_bg" >
+            android:background="@drawable/common_layout_press_bg"
+            android:paddingLeft="30dp"
+            android:paddingRight="20dp" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -140,22 +137,21 @@
                 android:textColor="#4A4A4A"
                 android:textSize="16sp" />
 
-            <ImageView 
+            <ImageView
                 android:id="@+id/person_password_iv_right_arrow"
                 android:layout_width="8dp"
                 android:layout_height="10.8dp"
-                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/person_right_arrow"
-                />
-            
+                android:layout_centerVertical="true"
+                android:src="@drawable/person_right_arrow" />
+
             <TextView
                 android:id="@+id/person_tv_password"
-                android:layout_toLeftOf="@id/person_password_iv_right_arrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
                 android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@id/person_password_iv_right_arrow"
                 android:text="********"
                 android:textColor="#4A4A4A"
                 android:textSize="16sp" />
@@ -167,9 +163,8 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/common_divider" >
-            
         </RelativeLayout>
-        
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="30dp"

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/videos_bg_color" >
+
+    <RelativeLayout
+        android:id="@+id/videos_rel_listview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="invisible" >
+
+        <include layout="@layout/common_refresh_listview_header_hidden" />
+
+        <com.qiubai.view.CommonRefreshListView
+            android:id="@+id/videos_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null" >
+        </com.qiubai.view.CommonRefreshListView>
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/setting_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/setting_bg_color" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="系统设置" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/setting_rel_ip"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/common_layout_press_bg"
+            android:paddingLeft="30dp"
+            android:paddingRight="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="IP"
+                android:textColor="#4A4A4A"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/setting_ip_iv_right_arrow"
+                android:layout_width="8dp"
+                android:layout_height="10.8dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/setting_right_arrow" />
+
+            <TextView
+                android:id="@+id/setting_tv_ip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@id/setting_ip_iv_right_arrow"
+                android:textColor="#4A4A4A"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/setting_rel_port"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/common_layout_press_bg"
+            android:paddingLeft="30dp"
+            android:paddingRight="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="PORT"
+                android:textColor="#4A4A4A"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/setting_port_iv_right_arrow"
+                android:layout_width="8dp"
+                android:layout_height="10.8dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/person_right_arrow" />
+
+            <TextView
+                android:id="@+id/setting_tv_port"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@id/setting_port_iv_right_arrow"
+                android:textColor="#4A4A4A"
+                android:textSize="16sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</ScrollView>

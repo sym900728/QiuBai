@@ -43,7 +43,7 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 	private Dialog fontDialog;
 	private GestureDetector gestureDetector;
 	private SharedPreferencesUtil spUtil = new SharedPreferencesUtil(NovelActivity.this);
-	private NovelService novelService = new NovelService();
+	private NovelService novelService;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +51,8 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.novel_activity);
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,R.layout.novel_title);
+		
+		novelService = new NovelService(NovelActivity.this);
 		
 		Intent intent = getIntent();
 		Novel novel = (Novel) intent.getSerializableExtra("novel");
@@ -156,8 +158,10 @@ public class NovelActivity extends Activity implements OnTouchListener, OnClickL
 			actionDialog.show();
 			break;
 		case R.id.common_action_share:
+			actionDialog.dismiss();
 			break;
 		case R.id.common_action_collect:
+			actionDialog.dismiss();
 			break;
 		case R.id.common_action_comment:
 			actionDialog.dismiss();

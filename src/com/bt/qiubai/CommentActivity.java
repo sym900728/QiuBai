@@ -1,7 +1,19 @@
 package com.bt.qiubai;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.qiubai.entity.CommentWithUser;
+import com.qiubai.service.CommentService;
+import com.qiubai.service.UserService;
+import com.qiubai.util.BitmapUtil;
+import com.qiubai.util.NetworkUtil;
+import com.qiubai.util.PropertiesUtil;
+import com.qiubai.util.SharedPreferencesUtil;
+import com.qiubai.view.CommonRefreshListView;
+import com.qiubai.view.CommonRefreshListView.OnRefreshListener;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -35,15 +47,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.qiubai.entity.CommentWithUser;
-import com.qiubai.service.CommentService;
-import com.qiubai.service.UserService;
-import com.qiubai.util.BitmapUtil;
-import com.qiubai.util.NetworkUtil;
-import com.qiubai.util.SharedPreferencesUtil;
-import com.qiubai.view.CommonRefreshListView;
-import com.qiubai.view.CommonRefreshListView.OnRefreshListener;
-
 public class CommentActivity extends Activity implements OnClickListener, OnTouchListener, OnRefreshListener {
 	
 	private RelativeLayout comment_title_back, comment_rel_listview, comment_rel_no_comment;
@@ -52,8 +55,6 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 	private CommonRefreshListView commentListview;
 	private RelativeLayout crl_header_hidden;
 	private ImageView common_progress_dialog_iv_rotate, common_publish_progress_dialog_iv_rotate;
-	private ImageView comment_listview_item_iv_icon;
-	private TextView comment_listview_item_iv_content, comment_listview_item_tv_username, comment_listview_item_tv_time;
 	private TextView comment_tv_no_comment;
 	
 	private int newsid;
@@ -64,11 +65,14 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 	private GestureDetector gestureDetector;
 	private Dialog progressDialog;
 	private Dialog publishProgressDialog;
+	private Bitmap bitmap_header_icon_default;
+	private Map<String, Bitmap> map = new HashMap<String, Bitmap>();
 	
 	private List<CommentWithUser> comments = new ArrayList<CommentWithUser>();
-	private CommentService commentService = new CommentService();
 	private SharedPreferencesUtil spUtil = new SharedPreferencesUtil(CommentActivity.this);
-	private UserService userService = new UserService();
+	private CommentService commentService;
+	private UserService userService;
+	private PropertiesUtil propUtil;
 	
 	private final static int COMMENT_SUCCESS = 1;
 	private final static int COMMENT_FAIL = 2;
@@ -91,6 +95,12 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.comment_activity);
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,R.layout.comment_title);
+		
+		commentService = new CommentService(CommentActivity.this);
+		userService = new UserService(CommentActivity.this);
+		propUtil = new PropertiesUtil(CommentActivity.this);
+		
+		bitmap_header_icon_default = BitmapUtil.circleBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.main_drawer_right_person_avatar));
 		
 		if(!NetworkUtil.isConnectInternet(this)){
 			Toast.makeText(this, "您没有连接网络，请连接网络", Toast.LENGTH_SHORT).show();
@@ -148,6 +158,7 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 		commentListview.setAdapter(commentBaseAdapter);
 		commentListview.setHiddenView(crl_header_hidden);
 		commentListview.setOnRefreshListener(this);
+		commentListview.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		
 		gestureDetector = new GestureDetector(CommentActivity.this,onGestureListener );
 		commentListview.setOnTouchListener(this);
@@ -232,15 +243,15 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 				String token = spUtil.getToken();
 				String result = commentService.addComment(belong, String.valueOf(newsid), userid, token, comment_edittext_comment.getText().toString().trim());
 				if("fail".equals(result)){
-					Message msg = commentHandle.obtainMessage(COMMENT_FAIL);
-					commentHandle.sendMessage(msg);
+					Message msg = commentHandler.obtainMessage(COMMENT_FAIL);
+					commentHandler.sendMessage(msg);
 				} else if("error".equals(result)){
-					Message msg = commentHandle.obtainMessage(COMMENT_ERROR);
-					commentHandle.sendMessage(msg);
+					Message msg = commentHandler.obtainMessage(COMMENT_ERROR);
+					commentHandler.sendMessage(msg);
 				} else {
-					Message msg = commentHandle.obtainMessage(COMMENT_SUCCESS);
+					Message msg = commentHandler.obtainMessage(COMMENT_SUCCESS);
 					msg.obj = result;
-					commentHandle.sendMessage(msg);
+					commentHandler.sendMessage(msg);
 				}
 			};
 		}.start();
@@ -258,16 +269,16 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 			public void run() {
 				String result = commentService.getComments(belong, String.valueOf(newsid), "0", COMMENT_LISTVIEW_SIZE);
 				if("nocontent".equals(result)){
-					Message msg = commentHandle.obtainMessage(COMMENT_LISTVIEW_FIRST_LOADING_NOCONTENT);
-					commentHandle.sendMessage(msg);
+					Message msg = commentHandler.obtainMessage(COMMENT_LISTVIEW_FIRST_LOADING_NOCONTENT);
+					commentHandler.sendMessage(msg);
 				} else if ("error".equals(result)){
-					Message msg = commentHandle.obtainMessage(COMMENT_LISTVIEW_FIRST_LOADING_ERROR);
-					commentHandle.sendMessage(msg);
+					Message msg = commentHandler.obtainMessage(COMMENT_LISTVIEW_FIRST_LOADING_ERROR);
+					commentHandler.sendMessage(msg);
 				} else {
 					List<CommentWithUser> list = commentService.parseCommentsJson(result);
-					Message msg = commentHandle.obtainMessage(COMMENT_LISTVIEW_FIRST_LOADING_SUCCESS);
+					Message msg = commentHandler.obtainMessage(COMMENT_LISTVIEW_FIRST_LOADING_SUCCESS);
 					msg.obj = list;
-					commentHandle.sendMessage(msg);
+					commentHandler.sendMessage(msg);
 				}
 				
 			};
@@ -283,16 +294,16 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 			public void run() {
 				String result = commentService.getComments(belong, String.valueOf(newsid), "0", COMMENT_LISTVIEW_SIZE);
 				if("nocontent".equals(result)){
-					Message msg = commentHandle.obtainMessage(COMMENT_LISTVIEW_REFRESH_NOCONTENT);
-					commentHandle.sendMessage(msg);
+					Message msg = commentHandler.obtainMessage(COMMENT_LISTVIEW_REFRESH_NOCONTENT);
+					commentHandler.sendMessage(msg);
 				} else if("error".equals(result)){
-					Message msg = commentHandle.obtainMessage(COMMENT_LISTVIEW_REFRESH_ERROR);
-					commentHandle.sendMessage(msg);
+					Message msg = commentHandler.obtainMessage(COMMENT_LISTVIEW_REFRESH_ERROR);
+					commentHandler.sendMessage(msg);
 				} else {
 					List<CommentWithUser> list = commentService.parseCommentsJson(result);
-					Message msg = commentHandle.obtainMessage(COMMENT_LISTVIEW_REFRESH_SUCCESS);
+					Message msg = commentHandler.obtainMessage(COMMENT_LISTVIEW_REFRESH_SUCCESS);
 					msg.obj = list;
-					commentHandle.sendMessage(msg);
+					commentHandler.sendMessage(msg);
 				}
 				
 			};
@@ -309,16 +320,16 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 				String offset = String.valueOf(comments.size());
 				String result = commentService.getComments(belong, String.valueOf(newsid), offset, COMMENT_LISTVIEW_SIZE);
 				if("nocontent".equals(result)){
-					Message msg = commentHandle.obtainMessage(COMMENT_LISTVIEW_REFRESH_LOADING_MORE_NOCONTENT);
-					commentHandle.sendMessage(msg);
+					Message msg = commentHandler.obtainMessage(COMMENT_LISTVIEW_REFRESH_LOADING_MORE_NOCONTENT);
+					commentHandler.sendMessage(msg);
 				} else if("error".equals(result)){
-					Message msg = commentHandle.obtainMessage(COMMENT_LISTVIEW_REFRESH_LOADING_MORE_ERROR);
-					commentHandle.sendMessage(msg);
+					Message msg = commentHandler.obtainMessage(COMMENT_LISTVIEW_REFRESH_LOADING_MORE_ERROR);
+					commentHandler.sendMessage(msg);
 				} else {
-					Message msg = commentHandle.obtainMessage(COMMENT_LISTVIEW_REFRESH_LOADING_MORE_SUCCESS);
+					Message msg = commentHandler.obtainMessage(COMMENT_LISTVIEW_REFRESH_LOADING_MORE_SUCCESS);
 					List<CommentWithUser> list = commentService.parseCommentsJson(result);
 					msg.obj = list;
-					commentHandle.sendMessage(msg);
+					commentHandler.sendMessage(msg);
 				}
 			};
 		}.start();
@@ -349,44 +360,95 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			convertView = inflater.inflate(R.layout.comment_listview_item, null);
-			CommentWithUser cwu = comments.get(position);
-			comment_listview_item_iv_icon = (ImageView) convertView.findViewById(R.id.comment_listview_item_iv_icon);
-			Bitmap defaultBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.main_drawer_right_person_avatar);
-			comment_listview_item_iv_icon.setImageBitmap(BitmapUtil.circleBitmap(defaultBitmap));
-			if( !"default".equals(cwu.getUser().getIcon()) ){
-				getUserIcon(cwu.getUser().getIcon(), comment_listview_item_iv_icon);
+			ViewHolder viewHolder = null;
+			if(convertView == null){
+				convertView = inflater.inflate(R.layout.comment_listview_item, null);
+				viewHolder = new ViewHolder();
+				viewHolder.comment_listview_item_iv_icon = (ImageView) convertView.findViewById(R.id.comment_listview_item_iv_icon);
+				viewHolder.comment_listview_item_tv_content = (TextView) convertView.findViewById(R.id.comment_listview_item_tv_content);
+				viewHolder.comment_listview_item_tv_username = (TextView) convertView.findViewById(R.id.comment_listview_item_tv_username);
+				viewHolder.comment_listview_item_tv_time = (TextView) convertView.findViewById(R.id.comment_listview_item_tv_time);
+				convertView.setTag(viewHolder);
+			} else {
+				viewHolder = (ViewHolder) convertView.getTag();
 			}
-			comment_listview_item_iv_content = (TextView) convertView.findViewById(R.id.comment_listview_item_iv_content);
-			comment_listview_item_iv_content.setText(cwu.getComment().getContent());
-			comment_listview_item_tv_username = (TextView) convertView.findViewById(R.id.comment_listview_item_tv_username);
-			comment_listview_item_tv_username.setText(cwu.getUser().getNickname());
-			comment_listview_item_tv_time = (TextView) convertView.findViewById(R.id.comment_listview_item_tv_time);
-			comment_listview_item_tv_time.setText(dealTime(cwu.getComment().getTime()));
+			CommentWithUser cwu = comments.get(position);
+			viewHolder.comment_listview_item_tv_content.setText(cwu.getComment().getContent());
+			viewHolder.comment_listview_item_tv_username.setText(cwu.getUser().getNickname());
+			viewHolder.comment_listview_item_tv_time.setText(dealTime(cwu.getComment().getTime()));
+			viewHolder.comment_listview_item_iv_icon.setImageBitmap(bitmap_header_icon_default);
+			if( !"default".equals(cwu.getUser().getIcon()) && !"".equals(cwu.getUser().getIcon()) ){
+				loadUserIcon(cwu.getUser().getUserid(), cwu.getUser().getIcon(), viewHolder.comment_listview_item_iv_icon);
+			}
+			
 			return convertView;
 		}
 		
+		private class ViewHolder{
+			ImageView comment_listview_item_iv_icon;
+			TextView comment_listview_item_tv_content;
+			TextView comment_listview_item_tv_username;
+			TextView comment_listview_item_tv_time;
+		}
+		
+	}
+	
+	public void loadUserIcon(final String userid, final String url, final ImageView iv){
+		Bitmap bitmap_map = map.get(userid);
+		if(bitmap_map != null){
+			iv.setImageBitmap(bitmap_map);
+		} else {
+			new Thread(){
+				public void run() {
+					Bitmap bitmap_file = BitmapFactory.decodeFile(propUtil.readProperties("config.properties", "userinfo_path") + userid + ".png");
+					if(bitmap_file != null){
+						final Bitmap bitmap_file_changed = BitmapUtil.circleBitmap(bitmap_file);
+						map.put(userid, bitmap_file_changed);
+						commentHandler.post(new Runnable() {
+							@Override
+							public void run() {
+								iv.setImageBitmap(bitmap_file_changed);
+							}
+						});
+					} else {
+						new Thread(){
+							public void run() {
+								Bitmap bitmap_remote = userService.getHeaderIcon(url);
+								if(bitmap_remote != null){
+									
+									final Bitmap bitmap_remote_changed = BitmapUtil.circleBitmap(bitmap_remote);
+									commentService.storeImage(bitmap_remote, userid + ".png");
+									map.put(userid, bitmap_remote_changed);
+									commentHandler.post(new Runnable() {
+										@Override
+										public void run() {
+											iv.setImageBitmap(bitmap_remote_changed);
+										}
+									});
+								}
+								
+							};
+						}.start();
+					}
+				};
+			}.start();
+		}
 	}
 
-	/**
-	 * get user icon
-	 * @param url
-	 * @param iv
-	 */
-	public void getUserIcon(final String url, final ImageView iv){
-		new Thread(){
-			public void run() {
-				final Bitmap bitmap = userService.getHeaderIcon(url);
-				commentHandle.post(new Runnable() {
-					@Override
+	public void storeBitmapToMap(List<CommentWithUser> list){
+		for(final CommentWithUser cwu : list){
+			if(!"default".equals(cwu.getUser().getIcon()) && !"".equals(cwu.getUser().getIcon()) ){
+				new Thread(){
 					public void run() {
+						Bitmap bitmap = userService.getHeaderIcon(cwu.getUser().getIcon());
 						if(bitmap != null){
-							iv.setImageBitmap(BitmapUtil.circleBitmap(bitmap));
+							map.put(cwu.getUser().getUserid(), BitmapUtil.circleBitmap(bitmap));
+							commentService.storeImage(bitmap, cwu.getUser().getUserid() + ".png");
 						}
-					}
-				});
-			};
-		}.start();
+					};
+				}.start();
+			}
+		}
 	}
 	
 	/**
@@ -400,11 +462,12 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 				String token = spUtil.getToken();
 				final String result = commentService.getCommentById(token, id, userid);
 				if(!"error".equals(result) && !"nocontent".equals(result)){
-					commentHandle.post(new Runnable() {
+					commentHandler.post(new Runnable() {
 						@Override
 						public void run() {
 							CommentWithUser cwu = commentService.parseCommentJson(result);
 							comments.add(0, cwu);
+							commentListview.setTimeTextViewTag();
 							commentBaseAdapter.notifyDataSetChanged();
 							if("nocontent".equals(commentContentFlag)){
 								commentContentFlag = "existcontent";
@@ -432,7 +495,7 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 	}
 	
 	@SuppressLint("HandlerLeak")
-	private Handler commentHandle = new Handler(){
+	private Handler commentHandler = new Handler(){
 		@SuppressWarnings("unchecked")
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -455,28 +518,31 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 				Toast.makeText(CommentActivity.this, "发布异常", Toast.LENGTH_SHORT).show();
 				break;
 			case COMMENT_LISTVIEW_REFRESH_SUCCESS:
-				commentListview.hiddenHeaderView(true);
+				commentListview.hiddenHeaderView();
+				commentListview.setTimeTextViewTag();
 				commentListview.hiddenFooterView(true);
 				comments.clear();
 				comments = (List<CommentWithUser>) msg.obj;
 				commentBaseAdapter.notifyDataSetChanged();
+				//storeBitmapToMap(comments);
 				break;
 			case COMMENT_LISTVIEW_REFRESH_NOCONTENT:
 				comment_tv_no_comment.setText("暂时没有评论，请写评论");
-				commentListview.hiddenHeaderView(true);
+				commentListview.hiddenHeaderView();
+				commentListview.setTimeTextViewTag();
 				commentListview.hiddenFooterView(true);
 				comment_rel_listview.setVisibility(View.INVISIBLE);
 				comment_rel_no_comment.setVisibility(View.VISIBLE);
 				break;
 			case COMMENT_LISTVIEW_REFRESH_ERROR:
 				Toast.makeText(CommentActivity.this, "网络连接异常", Toast.LENGTH_SHORT).show();
-				commentListview.hiddenHeaderView(false);
+				commentListview.hiddenHeaderView();
 				break;
 			case COMMENT_LISTVIEW_REFRESH_LOADING_MORE_SUCCESS:
 				commentListview.hiddenFooterView(true);
-				List<CommentWithUser> list1 = (List<CommentWithUser>) msg.obj;
-				addToListComments(list1);
+				addToListComments((List<CommentWithUser>) msg.obj);
 				commentBaseAdapter.notifyDataSetChanged();
+				//storeBitmapToMap((List<CommentWithUser>) msg.obj);
 				break;
 			case COMMENT_LISTVIEW_REFRESH_LOADING_MORE_NOCONTENT:
 				commentListview.hiddenFooterView(false);
@@ -488,12 +554,14 @@ public class CommentActivity extends Activity implements OnClickListener, OnTouc
 			case COMMENT_LISTVIEW_FIRST_LOADING_SUCCESS:
 				common_progress_dialog_iv_rotate.clearAnimation();
 				progressDialog.dismiss();
-				List<CommentWithUser> list2 = (List<CommentWithUser>) msg.obj;
+				//List<CommentWithUser> list2 = (List<CommentWithUser>) msg.obj;
 				comments.clear();
-				addToListComments(list2);
+				addToListComments((List<CommentWithUser>) msg.obj);
 				commentBaseAdapter.notifyDataSetChanged();
+				commentListview.setTimeTextViewTag();
 				comment_rel_listview.setVisibility(View.VISIBLE);
 				commentContentFlag = "existcontent";
+				//storeBitmapToMap((List<CommentWithUser>) msg.obj);
 				break;
 			case COMMENT_LISTVIEW_FIRST_LOADING_ERROR:
 				common_progress_dialog_iv_rotate.clearAnimation();

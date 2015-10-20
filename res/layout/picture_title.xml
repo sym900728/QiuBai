@@ -39,10 +39,10 @@
         android:layout_toLeftOf="@id/picture_title_action_bar" >
 
         <TextView
+            android:id="@+id/picture_tv_comments"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="30 评论"
             android:textColor="#FF0000" />
     </RelativeLayout>
 

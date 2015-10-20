@@ -47,7 +47,13 @@
     <color name="novel_content_text_color">#333333</color>
     <color name="novel_title_comment_text_color">#FF0000</color>
     
-    <!-- diy fragment -->
+    <!-- videos fragment -->
+    <color name="videos_bg_color">#F6F6F6</color>
+    <color name="video_title_comment_text_color">#FF0000</color>
+    
+    <!-- video activity -->
+    <color name="video_activity_bg_color">#F6F6F6</color>
+    <color name="video_content_title_text_color">#000000</color>
     
     <!-- character detail activity -->
     <color name="cd_activity_bg_color">#F6F6F6</color>
@@ -107,6 +113,9 @@
     <!-- person dialog nickname -->
     <color name="person_dialog_font_tv_confirm_color">#368BCB</color>
     <color name="person_dialog_font_tv_cancel_color">#BEBEBE</color>
+    
+    <!-- setting activity -->
+    <color name="setting_bg_color">#F6F6F6</color>
     
     <!-- common action bar -->
     <color name="common_action_content_text_color">#3F3F3F</color>

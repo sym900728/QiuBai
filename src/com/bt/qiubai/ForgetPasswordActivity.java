@@ -39,7 +39,7 @@ public class ForgetPasswordActivity extends Activity implements OnClickListener,
 	private ImageView fpw_email_iv_cancel, common_progress_dialog_iv_rotate;
 	
 	private GestureDetector gestureDetector;
-	private UserService userService = new UserService();
+	private UserService userService;
 	
 	private Dialog progressDialog;
 	private Animation anim_rotate;
@@ -54,6 +54,8 @@ public class ForgetPasswordActivity extends Activity implements OnClickListener,
 		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.fpw_activity);
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.fpw_title);
+		
+		userService = new UserService(ForgetPasswordActivity.this);
 		
 		if(!NetworkUtil.isConnectInternet(this)){
 			Toast.makeText(this, "您没有连接网络，请连接网络", Toast.LENGTH_SHORT).show();

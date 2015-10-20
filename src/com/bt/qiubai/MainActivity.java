@@ -37,38 +37,41 @@ import android.widget.Toast;
 import com.qiubai.service.UserService;
 import com.qiubai.util.BitmapUtil;
 import com.qiubai.util.DensityUtil;
-import com.qiubai.util.ReadPropertiesUtil;
+import com.qiubai.util.NetworkUtil;
+import com.qiubai.util.PropertiesUtil;
 import com.qiubai.util.SharedPreferencesUtil;
 
 public class MainActivity extends FragmentActivity implements OnClickListener {
 
 	private RelativeLayout main_title_reL_menu, rel_main_right, main_title_rel_person, 
 		main_viewpager_title_rel_picture, main_viewpager_title_rel_joke, 
-		main_viewpager_title_rel_novel, main_viewpager_title_rel_diy;
-	private RelativeLayout main_drawer_right, main_drawer_left, main_drawer_left_rel_hot, 
-		main_drawer_left_rel_character, main_drawer_left_rel_picture;
+		main_viewpager_title_rel_novel, main_viewpager_title_rel_video;
+	private RelativeLayout main_drawer_right, main_drawer_left, 
+		main_drawer_left_rel_picture, main_drawer_left_rel_joke,
+		main_drawer_left_rel_novel, main_drawer_left_rel_video;
 	private LinearLayout main_drawer_right_lin_comment, main_drawer_right_lin_collect;
 	private LinearLayout main_action_bar_lin_setting;
 	private ImageView main_viewpager_title_iv_picture, main_viewpager_title_iv_joke, main_viewpager_title_iv_novel,
-		main_viewpager_title_iv_diy, main_drawer_right_iv_avatar, title_menu_avator;
+		main_viewpager_title_iv_video, main_drawer_right_iv_avatar, title_menu_avator;
 	private TextView main_viewpager_title_tv_picture, main_viewpager_title_tv_joke, main_viewpager_title_tv_novel,
-		main_viewpager_title_tv_diy, main_drawer_right_tv_nickname, text_weather;
+		main_viewpager_title_tv_video, main_drawer_right_tv_nickname;
 	private DrawerLayout main_drawer;
 	private ViewPager main_viewpager;
 	
-	private int screenWidth, screenHeight;
+	private int screenWidth;
 	private Bitmap bitmap_underline;
-	private Dialog rightDialog;
+	private Dialog actionDialog;
 	private List<Fragment> list_fragments = new ArrayList<Fragment>();
 	private MainFragmentPagerAdapter mainFragmentPagerAdpater;
 	
 	private SharedPreferencesUtil spUtil = new SharedPreferencesUtil(MainActivity.this);
-	private UserService userService = new UserService();
+	private UserService userService;
+	private PropertiesUtil propUtil;
 	
 	private boolean isMainDrawerLeftOpen = false, isMainDrawerRightOpen = false;
 	private boolean isMainDrawerRightSet = false;
-	private final static int EXIT = 1; 
-	private static boolean isExit = false; // 定义变量，判断是否退出
+	private final static int EXIT = 0; 
+	private static boolean isExit = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +80,15 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		setContentView(R.layout.main_activity);
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.main_title);
 		
+		userService = new UserService(MainActivity.this);
+		propUtil = new PropertiesUtil(MainActivity.this);
+		NetworkUtil.checkInternetShowToast(MainActivity.this);
+		
+		System.out.println("--->dpi:" + getApplication().getResources().getDisplayMetrics().densityDpi);
+		System.out.println("--->scale:" + getApplication().getResources().getDisplayMetrics().density);
+		System.out.println("--->:" + DensityUtil.dip2px(getApplication(), 100));
+		
 		screenWidth = getWindowManager().getDefaultDisplay().getWidth();
-		screenHeight = getWindowManager().getDefaultDisplay().getHeight();
 		bitmap_underline = BitmapUtil.resizeBitmapFillBox(screenWidth/4, DensityUtil.dip2px(this, 2.5f), BitmapFactory.decodeResource(getResources(), R.drawable.main_viewpager_title_underline));
 		
 		title_menu_avator = (ImageView) findViewById(R.id.title_menu_avator);
@@ -94,18 +104,23 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		main_viewpager_title_rel_joke.setOnClickListener(this);
 		main_viewpager_title_rel_novel = (RelativeLayout) findViewById(R.id.main_viewpager_title_rel_novel);
 		main_viewpager_title_rel_novel.setOnClickListener(this);
-		main_viewpager_title_rel_diy = (RelativeLayout) findViewById(R.id.main_viewpager_title_rel_diy);
-		main_viewpager_title_rel_diy.setOnClickListener(this);
+		main_viewpager_title_rel_video = (RelativeLayout) findViewById(R.id.main_viewpager_title_rel_video);
+		main_viewpager_title_rel_video.setOnClickListener(this);
 		main_viewpager_title_iv_picture = (ImageView) findViewById(R.id.main_viewpager_title_iv_picture);
 		main_viewpager_title_iv_joke = (ImageView) findViewById(R.id.main_viewpager_title_iv_joke);
 		main_viewpager_title_iv_novel = (ImageView) findViewById(R.id.main_viewpager_title_iv_novel);
-		main_viewpager_title_iv_diy = (ImageView) findViewById(R.id.main_viewpager_title_iv_diy);
+		main_viewpager_title_iv_video = (ImageView) findViewById(R.id.main_viewpager_title_iv_video);
 		main_viewpager_title_tv_picture = (TextView) findViewById(R.id.main_viewpager_title_tv_picture);
 		main_viewpager_title_tv_joke = (TextView) findViewById(R.id.main_viewpager_title_tv_joke);
 		main_viewpager_title_tv_novel = (TextView) findViewById(R.id.main_viewpager_title_tv_novel);
-		main_viewpager_title_tv_diy = (TextView) findViewById(R.id.main_viewpager_title_tv_diy);
+		main_viewpager_title_tv_video = (TextView) findViewById(R.id.main_viewpager_title_tv_video);
 		
-		initTitleDialog(); //加载titlebar的dialog控件
+		actionDialog = new Dialog(MainActivity.this, R.style.CommonActionDialog);
+		actionDialog.setContentView(R.layout.main_action_bar);
+		actionDialog.getWindow().setGravity(Gravity.RIGHT | Gravity.TOP);
+		main_action_bar_lin_setting = (LinearLayout) actionDialog.findViewById(R.id.main_action_bar_lin_setting);
+		main_action_bar_lin_setting.setOnClickListener(this);
+		
 		main_drawer = (DrawerLayout) findViewById(R.id.main_drawer);
 		main_drawer.setDrawerListener(new MainDrawerListener());
 		main_drawer_right = (RelativeLayout) findViewById(R.id.main_drawer_right);
@@ -123,12 +138,14 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		DrawerLayout.LayoutParams main_drawer_left_params =  (android.support.v4.widget.DrawerLayout.LayoutParams) main_drawer_left.getLayoutParams();
 		main_drawer_left_params.width = screenWidth / 5 * 3;
 		main_drawer_left.setLayoutParams(main_drawer_left_params);
-		main_drawer_left_rel_hot = (RelativeLayout) findViewById(R.id.main_drawer_left_rel_hot);
-		main_drawer_left_rel_hot.setOnClickListener(this);
-		main_drawer_left_rel_character = (RelativeLayout) findViewById(R.id.main_drawer_left_rel_character);
-		main_drawer_left_rel_character.setOnClickListener(this);
 		main_drawer_left_rel_picture = (RelativeLayout) findViewById(R.id.main_drawer_left_rel_picture);
 		main_drawer_left_rel_picture.setOnClickListener(this);
+		main_drawer_left_rel_joke = (RelativeLayout) findViewById(R.id.main_drawer_left_rel_joke);
+		main_drawer_left_rel_joke.setOnClickListener(this);
+		main_drawer_left_rel_novel = (RelativeLayout) findViewById(R.id.main_drawer_left_rel_novel);
+		main_drawer_left_rel_novel.setOnClickListener(this);
+		main_drawer_left_rel_video = (RelativeLayout) findViewById(R.id.main_drawer_left_rel_video);
+		main_drawer_left_rel_video.setOnClickListener(this);
 		
 		main_viewpager = (ViewPager) findViewById(R.id.main_viewpager);
 		initFragment();
@@ -144,7 +161,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	protected void onResume() {
 		super.onResume();
 		if(userService.checkUserLogin(MainActivity.this)){
-			Bitmap bitmap = BitmapFactory.decodeFile(ReadPropertiesUtil.read("config", "header_icon_path"));
+			Bitmap bitmap = BitmapFactory.decodeFile(propUtil.readProperties("config.properties", "header_icon_path"));
 			if(bitmap == null){
 				bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.main_drawer_right_person_avatar);
 				title_menu_avator.setImageBitmap(bitmap);
@@ -191,7 +208,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 			}
 			break;
 		case R.id.rel_main_title_right:
-			rightDialog.show();
+			actionDialog.show();
 			break;
 		case R.id.main_viewpager_title_rel_picture:
 			main_viewpager.setCurrentItem(0);
@@ -202,19 +219,23 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		case R.id.main_viewpager_title_rel_novel:
 			main_viewpager.setCurrentItem(2);
 			break;
-		case R.id.main_viewpager_title_rel_diy:
+		case R.id.main_viewpager_title_rel_video:
 			main_viewpager.setCurrentItem(3);
 			break;
-		case R.id.main_drawer_left_rel_hot:
+		case R.id.main_drawer_left_rel_picture:
 			main_viewpager.setCurrentItem(0);
 			main_drawer.closeDrawer(main_drawer_left);
 			break;
-		case R.id.main_drawer_left_rel_character:
+		case R.id.main_drawer_left_rel_joke:
 			main_viewpager.setCurrentItem(1);
 			main_drawer.closeDrawer(main_drawer_left);
 			break;
-		case R.id.main_drawer_left_rel_picture:
+		case R.id.main_drawer_left_rel_novel:
 			main_viewpager.setCurrentItem(2);
+			main_drawer.closeDrawer(main_drawer_left);
+			break;
+		case R.id.main_drawer_left_rel_video:
+			main_viewpager.setCurrentItem(3);
 			main_drawer.closeDrawer(main_drawer_left);
 			break;
 		case R.id.main_drawer_right_lin_comment:
@@ -231,9 +252,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		case R.id.main_drawer_right_lin_collect:
 			break;
 		case R.id.main_action_bar_lin_setting:
-			//点击设置
-			rightDialog.dismiss();
-			Toast.makeText(MainActivity.this, "点击设置，准备跳转", Toast.LENGTH_SHORT).show();
+			actionDialog.dismiss();
+			Intent intent_to_setting = new Intent(MainActivity.this, SettingActivity.class);
+			startActivity(intent_to_setting);
+			overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
 			break;
 		}
 	}
@@ -268,7 +290,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 				if(!isMainDrawerRightSet){
 					if(userService.checkUserLogin(MainActivity.this)){
 						main_drawer_right_tv_nickname.setText(spUtil.getNickname());
-						Bitmap bitmap = BitmapFactory.decodeFile(ReadPropertiesUtil.read("config", "header_icon_path"));
+						Bitmap bitmap = BitmapFactory.decodeFile(propUtil.readProperties("config.properties", "header_icon_path"));
 						if(bitmap == null){
 							bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.main_drawer_right_person_avatar);
 							main_drawer_right_iv_avatar.setImageBitmap(bitmap);
@@ -306,41 +328,39 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 				translateUnderline( (float)distance/4, bitmap_underline, main_viewpager_title_iv_picture);
 				translateUnderline(- (float)screenWidth/4 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_joke);
 				translateUnderline(- (float)screenWidth/4 * 2 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_novel);
-				translateUnderline(- (float)screenWidth/4 * 3 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_diy);
+				translateUnderline(- (float)screenWidth/4 * 3 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_video);
 			} else if(item == 1){
 				translateUnderline( (float)screenWidth/4 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_picture);
 				translateUnderline( (float)distance/4, bitmap_underline, main_viewpager_title_iv_joke);
 				translateUnderline(- (float)screenWidth/4 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_novel);
-				translateUnderline(- (float)screenWidth/4 * 2 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_diy);
+				translateUnderline(- (float)screenWidth/4 * 2 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_video);
 			} else if(item == 2){
 				translateUnderline( (float)screenWidth/4 * 2 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_picture);
 				translateUnderline( (float)screenWidth/4 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_joke);
 				translateUnderline( (float)distance/4, bitmap_underline, main_viewpager_title_iv_novel);
-				translateUnderline(- (float)screenWidth/4 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_diy);
+				translateUnderline(- (float)screenWidth/4 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_video);
 			} else if(item == 3){
 				translateUnderline( (float)screenWidth/4 * 3 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_picture);
 				translateUnderline( (float)screenWidth/4 * 2 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_joke);
 				translateUnderline( (float)screenWidth/4 + (float)distance/4, bitmap_underline, main_viewpager_title_iv_novel);
-				translateUnderline( (float)distance/4, bitmap_underline, main_viewpager_title_iv_diy);
+				translateUnderline( (float)distance/4, bitmap_underline, main_viewpager_title_iv_video);
 			}
 		}
 
 		@Override
 		public void onPageSelected(int item) {
 			setViewpagerTitleTextColor(item);
+			if(item == 0){
+				((PicturesFragment)list_fragments.get(item)).loadPicturesDataTimer();
+			} else if (item == 1){
+				((JokesFragment)list_fragments.get(item)).loadJokesDataTimer();
+			} else if (item == 2){
+				((NovelsFragment)list_fragments.get(item)).loadNovelsDataTimer();
+			} else if (item == 3){
+				((VideosFragment)list_fragments.get(item)).loadVideosDataTimer();
+			}
 		}
 		
-	}
-
-	/**
-	 * initialize title dialog
-	 */
-	private void initTitleDialog() {
-		rightDialog = new Dialog(MainActivity.this, R.style.CommonActionDialog);
-		rightDialog.setContentView(R.layout.main_action_bar);
-		rightDialog.getWindow().setGravity(Gravity.RIGHT | Gravity.TOP);
-		main_action_bar_lin_setting = (LinearLayout) rightDialog.findViewById(R.id.main_action_bar_lin_setting);
-		main_action_bar_lin_setting.setOnClickListener(this);
 	}
 	
 	/**
@@ -350,12 +370,12 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		PicturesFragment picturesFragment = new PicturesFragment();
 		JokesFragment jokesFragment = new JokesFragment();
 		NovelsFragment novelsFragment = new NovelsFragment();
-		DiyFragment diyFragment = new DiyFragment();
+		VideosFragment videosFragment = new VideosFragment();
 		
 		list_fragments.add(picturesFragment);
 		list_fragments.add(jokesFragment);
 		list_fragments.add(novelsFragment);
-		list_fragments.add(diyFragment);
+		list_fragments.add(videosFragment);
 	}
 
 	private class MainFragmentPagerAdapter extends FragmentPagerAdapter{
@@ -384,22 +404,22 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 			main_viewpager_title_tv_picture.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_active_color));
 			main_viewpager_title_tv_joke.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
 			main_viewpager_title_tv_novel.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
-			main_viewpager_title_tv_diy.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
+			main_viewpager_title_tv_video.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
 		} else if(item == 1){
 			main_viewpager_title_tv_picture.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
 			main_viewpager_title_tv_joke.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_active_color));
 			main_viewpager_title_tv_novel.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
-			main_viewpager_title_tv_diy.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
+			main_viewpager_title_tv_video.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
 		} else if(item == 2){
 			main_viewpager_title_tv_picture.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
 			main_viewpager_title_tv_joke.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
 			main_viewpager_title_tv_novel.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_active_color));
-			main_viewpager_title_tv_diy.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
+			main_viewpager_title_tv_video.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
 		} else if(item == 3){
 			main_viewpager_title_tv_picture.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
 			main_viewpager_title_tv_joke.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
 			main_viewpager_title_tv_novel.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_inactive_color));
-			main_viewpager_title_tv_diy.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_active_color));
+			main_viewpager_title_tv_video.setTextColor(getResources().getColor(R.color.main_viewpager_title_tv_active_color));
 		}
 	}
 	
@@ -433,8 +453,8 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 		if (!isExit) {
 			isExit = true;
 			Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
-			// 利用Handler延迟2秒发送更改消息
-			mainHandler.sendEmptyMessageDelayed(EXIT, 2000);
+			// 利用 handler 延迟发送更改消息
+			mainHandler.sendEmptyMessageDelayed(EXIT, 1500);
 		} else {
 			finish();
 		}
@@ -444,7 +464,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	private Handler mainHandler = new Handler() {
 		public void handleMessage(Message msg) {
 			if (msg.what == EXIT) {
-				isExit = false; // 退出程序
+				isExit = false; //退出程序
 			} 
 		}
 	};

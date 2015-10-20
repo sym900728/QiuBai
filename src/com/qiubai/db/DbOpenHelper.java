@@ -16,8 +16,18 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		String sql = "create table note(id integer primary key autoincrement,content varchar(1024),time varchar(20))";
-		db.execSQL(sql);
+		db.execSQL("create table tb_picture(id integer primary key autoincrement, belong varchar(255),"
+				+ "title varchar(255), image1 varchar(255), image2 varchar(255), image3 varchar(255),"
+				+ "time varchar(255), comments integer, counts integer)");
+		db.execSQL("create table tb_joke(id integer primary key autoincrement, belong varchar(255),"
+				+ "title varchar(255), description varchar(255), content text, time varchar(255),"
+				+ "zan integer, comments integer)");
+		db.execSQL("create table tb_novel(id integer primary key autoincrement, belong varchar(255)"
+				+ ", image varchar(255), title varchar(255), description varchar(255), content text"
+				+ ", time varchar(255), comments integer)");
+		db.execSQL("create table tb_video(id integer primary key autoincrement, belong varchar(255),"
+				+ "title varchar(255), image varchar(255), video varchar(255), time varchar(255),"
+				+ "comments integer)");
 	}
 
 	@Override

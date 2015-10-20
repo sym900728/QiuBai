@@ -108,7 +108,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:text="跟帖"
+                        android:text="评论"
                         android:textColor="@color/common_grey_color"
                         android:textSize="13sp" />
                 </RelativeLayout>

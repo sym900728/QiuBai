@@ -3,6 +3,17 @@ package com.bt.qiubai;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qiubai.dao.JokeDao;
+import com.qiubai.dao.impl.JokeDaoImpl;
+import com.qiubai.entity.Joke;
+import com.qiubai.service.JokeService;
+import com.qiubai.util.CommonRefreshListViewAnimation;
+import com.qiubai.util.NetworkUtil;
+import com.qiubai.util.SharedPreferencesUtil;
+import com.qiubai.util.TimeUtil;
+import com.qiubai.view.CommonRefreshListView;
+import com.qiubai.view.CommonRefreshListView.OnRefreshListener;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -19,20 +30,16 @@ import android.widget.BaseAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.qiubai.entity.Joke;
-import com.qiubai.service.JokeService;
-import com.qiubai.view.CommonRefreshListView;
-import com.qiubai.view.CommonRefreshListView.OnRefreshListener;
-
 public class JokesFragment extends Fragment implements OnRefreshListener{
 	
 	private RelativeLayout jokes_rel_listview, crl_header_hidden;
-	private TextView jokes_listview_item_tv_content, jokes_listview_item_tv_zan, jokes_listview_item_tv_comment;
 	private CommonRefreshListView jokesListView;
 	
 	private JokesBaseAdapter jokesBaseAdapter;
-	private JokeService jokeService = new JokeService();
+	private JokeService jokeService;
+	private JokeDao jokeDao;
 	private List<Joke> jokes = new ArrayList<Joke>();
+	private SharedPreferencesUtil spUtil;
 	
 	private final static int JOKES_LISTVIEW_REFRESH_SUCCESS = 1;
 	private final static int JOKES_LISTVIEW_REFRESH_NOCONTENT = 2;
@@ -43,12 +50,17 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 	private final static int JOKES_LISTVIEW_FIRST_LOADING_SUCCESS = 7;
 	private final static int JOKES_LISTVIEW_FIRST_LOADING_ERROR = 8;
 	private final static int JOKES_LISTVIEW_FIRST_LOADING_NOCONTENT = 9;
-	private final static String JOKES_LISTVIEW_SIZE = "20";
+	private final static String JOKES_LISTVIEW_SIZE = "15";
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view_jokes = inflater.inflate(R.layout.jokes_fragment, container, false);
+		
+		jokeService = new JokeService(this.getActivity());
+		jokeDao = new JokeDaoImpl(this.getActivity());
+		spUtil = new SharedPreferencesUtil(this.getActivity());
+		
 		jokes_rel_listview = (RelativeLayout) view_jokes.findViewById(R.id.jokes_rel_listview);
 		jokesListView = (CommonRefreshListView) view_jokes.findViewById(R.id.jokes_listview);
 		crl_header_hidden = (RelativeLayout) view_jokes.findViewById(R.id.crl_header_hidden);
@@ -71,13 +83,47 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 				getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.stay_in_place);
 			}
 		});
-		
-		onFirstLoadingJokes();
+		loadDatabaseData();
 		return view_jokes;
 	}
 	
+	public void loadJokesDataTimer(){
+		//判断有没有联网
+		if(NetworkUtil.isConnectInternet(this.getActivity())){
+			//判断是不是第一次使用 JokesFragment
+			if(spUtil.isFirstRun("isJokesFragmentFirstRun")){
+				onFirstLoadingJokes();
+			} else {
+				//判断当前时间跟上一次刷新时间差
+				long time = spUtil.getRefreshTime("jokesFragmentLastRefreshTime");
+				if(TimeUtil.compareTime(time)){
+					CommonRefreshListViewAnimation.moveListView(jokesListView, "jokesFragmentLastRefreshTime");
+				}
+			}
+		}
+	}
+	
+	public void loadDatabaseData(){
+		jokes.clear();
+		jokes = jokeDao.getJokes(null);;
+		if(!jokes.isEmpty()){
+			jokesBaseAdapter.notifyDataSetChanged();
+			jokesListView.setLastUpdateTime("jokesFragmentLastRefreshTime");
+			jokes_rel_listview.setVisibility(View.VISIBLE);
+		}
+	}
+	
+	public void setDatabaseData(final List<Joke> list){
+		new Thread(){
+			public void run() {
+				jokeDao.emptyJokeTable();
+				jokeDao.addJokes(list);
+			};
+		}.start();
+	}
+	
 	public void onFirstLoadingJokes(){
-		jokes_rel_listview.setVisibility(View.INVISIBLE);
+		//jokes_rel_listview.setVisibility(View.INVISIBLE);
 		new Thread(){
 			public void run() {
 				String result = jokeService.getJokes("0", JOKES_LISTVIEW_SIZE);
@@ -122,17 +168,30 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 		@SuppressLint("ViewHolder")
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			convertView = inflater.inflate(R.layout.jokes_listview_item, null);
+			ViewHolder viewHolder = null;
+			if(convertView == null){
+				convertView = inflater.inflate(R.layout.jokes_listview_item, null);
+				viewHolder = new ViewHolder();
+				viewHolder.jokes_listview_item_tv_content = (TextView) convertView.findViewById(R.id.jokes_listview_item_tv_content);
+				viewHolder.jokes_listview_item_tv_zan = (TextView) convertView.findViewById(R.id.jokes_listview_item_tv_zan);
+				viewHolder.jokes_listview_item_tv_comment = (TextView) convertView.findViewById(R.id.jokes_listview_item_tv_comment);
+				convertView.setTag(viewHolder);
+			} else {
+				viewHolder = (ViewHolder) convertView.getTag();
+			}
+			
 			Joke joke = jokes.get(position);
-			jokes_listview_item_tv_content = (TextView) convertView.findViewById(R.id.jokes_listview_item_tv_content);
-			jokes_listview_item_tv_content.setText(joke.getContent());
-			jokes_listview_item_tv_zan = (TextView) convertView.findViewById(R.id.jokes_listview_item_tv_zan);
-			jokes_listview_item_tv_zan.setText(joke.getZan() + " 赞");
-			jokes_listview_item_tv_comment = (TextView) convertView.findViewById(R.id.jokes_listview_item_tv_comment);
-			jokes_listview_item_tv_comment.setText(joke.getComments() + " 评论");
+			viewHolder.jokes_listview_item_tv_content.setText(joke.getDescription());
+			viewHolder.jokes_listview_item_tv_zan.setText(joke.getZan() + " 赞");
+			viewHolder.jokes_listview_item_tv_comment.setText(joke.getComments() + " 评论");
 			return convertView;
 		}
 		
+		private class ViewHolder{
+			TextView jokes_listview_item_tv_content;
+			TextView jokes_listview_item_tv_zan;
+			TextView jokes_listview_item_tv_comment;
+		}
 	}
 	
 	private Handler jokesHandler = new Handler(){
@@ -141,14 +200,17 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 			switch (msg.what) {
 			case JOKES_LISTVIEW_REFRESH_SUCCESS:
 				jokesListView.hiddenFooterView(true);
-				jokesListView.hiddenHeaderView(true);
+				jokesListView.hiddenHeaderView();
 				jokes.clear();
 				jokes = (List<Joke>) msg.obj;
 				jokesBaseAdapter.notifyDataSetChanged();
+				jokesListView.updateLastUpdateTime("jokesFragmentLastRefreshTime");
+				setDatabaseData(jokes);
 				break;
 			case JOKES_LISTVIEW_REFRESH_NOCONTENT:
 				break;
 			case JOKES_LISTVIEW_REFRESH_ERROR:
+				jokesListView.hiddenHeaderView();
 				break;
 			case JOKES_LISTVIEW_REFRESH_LOADING_MORE_SUCCESS:
 				jokesListView.hiddenFooterView(true);
@@ -163,9 +225,11 @@ public class JokesFragment extends Fragment implements OnRefreshListener{
 				break;
 			case JOKES_LISTVIEW_FIRST_LOADING_SUCCESS:
 				jokes.clear();
-				jokes =  (List<Joke>) msg.obj;
+				jokes = (List<Joke>) msg.obj;
 				jokesBaseAdapter.notifyDataSetChanged();
+				jokesListView.updateLastUpdateTime("jokesFragmentLastRefreshTime");
 				jokes_rel_listview.setVisibility(View.VISIBLE);
+				setDatabaseData(jokes);
 				break;
 			case JOKES_LISTVIEW_FIRST_LOADING_ERROR:
 				break;

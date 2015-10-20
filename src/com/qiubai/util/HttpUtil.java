@@ -56,7 +56,7 @@ public class HttpUtil {
 			}
 			return result;
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return result;
 		}
 		
@@ -84,7 +84,7 @@ public class HttpUtil {
 			}
 			return result;
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return result;
 		}
 	}

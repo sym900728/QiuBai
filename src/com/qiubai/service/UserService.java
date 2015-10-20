@@ -23,26 +23,29 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.qiubai.entity.User;
+import com.qiubai.util.HttpUtil;
+import com.qiubai.util.PropertiesUtil;
+import com.qiubai.util.SharedPreferencesUtil;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
-import com.qiubai.entity.User;
-import com.qiubai.util.HttpUtil;
-import com.qiubai.util.ReadPropertiesUtil;
-import com.qiubai.util.SharedPreferencesUtil;
-import com.qiubai.util.StringUtil;
 
 public class UserService {
 	
 	private String protocol;
 	private String ip;
 	private String port;
+	private PropertiesUtil propUtil;
+	private SharedPreferencesUtil spUtil;
 	
-	public UserService(){
-		protocol = ReadPropertiesUtil.read("config", "protocol");
-		ip = ReadPropertiesUtil.read("config", "ip");
-		port = ReadPropertiesUtil.read("config", "port");
+	public UserService(Context context){
+		propUtil = new PropertiesUtil(context);
+		spUtil = new SharedPreferencesUtil(context);
+		protocol = spUtil.getProtocol();
+		ip = spUtil.getIp();
+		port = spUtil.getPort();
 		
 	}
 	
@@ -63,7 +66,7 @@ public class UserService {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("userid", userid);
 		params.put("password", password);
-		return HttpUtil.doPost(params, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "login"));
+		return HttpUtil.doPost(params, protocol + ip + ":" + port + propUtil.readProperties("link.properties", "login"));
 	}
 	
 	public User parseLoginJson(String json){
@@ -86,18 +89,18 @@ public class UserService {
 		params.put("email", email);
 		params.put("nickname", nickname);
 		params.put("password", password);
-		return HttpUtil.doPost(params, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "register"));
+		return HttpUtil.doPost(params, protocol + ip + ":" + port + propUtil.readProperties("link.properties", "register"));
 	}
 	
 	public String forgetPassword(String email){
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("userid", email);
-		return HttpUtil.doPost(params, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "forgetPassword"));
+		return HttpUtil.doPost(params, protocol + ip + ":" + port + propUtil.readProperties("link.properties", "forgetPassword"));
 	}
 	
 	public boolean logout(Context context){
 		SharedPreferencesUtil spUtil = new SharedPreferencesUtil(context);
-		File file = new File(ReadPropertiesUtil.read("config", "header_icon_path"));
+		File file = new File(propUtil.readProperties("config.properties", "header_icon_path"));
 		if(spUtil.removeToken() && spUtil.removeUserid()){
 			if(file != null){
 				file.delete();
@@ -112,7 +115,7 @@ public class UserService {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("userid", userid);
 		params.put("nickname", nickname);
-		return HttpUtil.doPost(params, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "changeNickname") + token);
+		return HttpUtil.doPost(params, protocol + ip + ":" + port + propUtil.readProperties("link.properties", "changeNickname") + token);
 	}
 	
 	public String changePassword(String userid, String token, String originPassword, String newPassword){
@@ -120,7 +123,7 @@ public class UserService {
 		params.put("userid", userid);
 		params.put("originPassword", originPassword);
 		params.put("newPassword", newPassword);
-		return HttpUtil.doPost(params, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "changePassword") + token);
+		return HttpUtil.doPost(params, protocol + ip + ":" + port + propUtil.readProperties("link.properties", "changePassword") + token);
 	}
 	
 	//public String collect(String userid, String token, )
@@ -133,7 +136,7 @@ public class UserService {
 		String end = "\r\n";
 		
 		try {
-			URL url = new URL(protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "uploadIcon") + token + "/" + userid);
+			URL url = new URL(protocol + ip + ":" + port + propUtil.readProperties("link.properties", "uploadIcon") + token + "/" + userid);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout(30000);
 			conn.setConnectTimeout(30000);
@@ -183,7 +186,7 @@ public class UserService {
 	public Bitmap getHeaderIcon(String uri){
 		Bitmap bitmap = null;
 		try {
-			HttpGet get = new HttpGet(StringUtil.changeBackslashToSlash(uri)); 
+			HttpGet get = new HttpGet(protocol + ip + ":" + port + uri); 
 			HttpClient client = new DefaultHttpClient();
 			HttpResponse response = client.execute(get);
 			if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
@@ -201,7 +204,7 @@ public class UserService {
 	
 	public void storeImage(Bitmap bitmap){
 		try {
-			File filepath = new File(ReadPropertiesUtil.read("config", "userinfo_path"));
+			File filepath = new File(propUtil.readProperties("config.properties", "userinfo_path"));
 			if (!filepath.exists()) {
 				filepath.mkdirs();
 			}

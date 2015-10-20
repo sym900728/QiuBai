@@ -1,5 +1,8 @@
 package com.qiubai.service;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -18,12 +21,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.qiubai.entity.Novel;
 import com.qiubai.util.HttpUtil;
-import com.qiubai.util.ReadPropertiesUtil;
+import com.qiubai.util.PropertiesUtil;
+import com.qiubai.util.SharedPreferencesUtil;
 import com.qiubai.util.StringUtil;
 
 public class NovelService {
@@ -31,24 +36,28 @@ public class NovelService {
 	private String protocol;
 	private String ip;
 	private String port;
+	private PropertiesUtil propUtil;
+	private SharedPreferencesUtil spUtil;
 	
-	public NovelService(){
-		protocol = ReadPropertiesUtil.read("config", "protocol");
-		ip = ReadPropertiesUtil.read("config", "ip");
-		port = ReadPropertiesUtil.read("config", "port");
+	public NovelService(Context context){
+		propUtil = new PropertiesUtil(context);
+		spUtil = new SharedPreferencesUtil(context);
+		protocol = spUtil.getProtocol();
+		ip = spUtil.getIp();
+		port = spUtil.getPort();
 	}
 	
 	public String getNovels(String offset, String length){
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("offset", offset);
 		params.put("length", length);
-		return HttpUtil.doPost(params, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "getNovels"));
+		return HttpUtil.doPost(params, protocol + ip + ":" + port + propUtil.readProperties("link.properties", "getNovels"));
 	}
 	
 	public String getNovelComments(String id){
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("id", id);
-		return HttpUtil.doPost(params, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "getNovelComments"));
+		return HttpUtil.doPost(params, protocol + ip + ":" + port + propUtil.readProperties("link.properties", "getNovelComments"));
 	}
 	
 	public List<Novel> parseNovelsJson(String json){
@@ -94,7 +103,7 @@ public class NovelService {
 	public Bitmap getImage(String uri){
 		Bitmap bitmap = null;
 		try {
-			HttpGet get = new HttpGet(StringUtil.changeBackslashToSlash(uri));
+			HttpGet get = new HttpGet(protocol + ip + ":" + port + StringUtil.changeBackslashToSlash(uri));
 			HttpClient client = new DefaultHttpClient();
 			HttpResponse response = client.execute(get);
 			if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
@@ -108,5 +117,26 @@ public class NovelService {
 			e.printStackTrace();
 		}
 		return bitmap;
+	}
+	
+	/**
+	 * store image
+	 * @param bitmap
+	 * @param filename
+	 */
+	public void storeImage(Bitmap bitmap, String filename){
+		try {
+			File filepath = new File(propUtil.readProperties("config.properties", "novels_picture_path"));
+			if (!filepath.exists()) {
+				filepath.mkdirs();
+			}
+			FileOutputStream fileOS = new FileOutputStream(filepath + "/" + filename);
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOS);
+			fileOS.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

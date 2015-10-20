@@ -1,5 +1,9 @@
 package com.qiubai.service;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,18 +17,26 @@ import com.qiubai.entity.Comment;
 import com.qiubai.entity.CommentWithUser;
 import com.qiubai.entity.User;
 import com.qiubai.util.HttpUtil;
-import com.qiubai.util.ReadPropertiesUtil;
+import com.qiubai.util.PropertiesUtil;
+import com.qiubai.util.SharedPreferencesUtil;
+
+import android.content.Context;
+import android.graphics.Bitmap;
 
 public class CommentService {
 
 	private String protocol;
 	private String ip;
 	private String port;
+	private PropertiesUtil propUtil;
+	private SharedPreferencesUtil spUtil;
 	
-	public CommentService(){
-		protocol = ReadPropertiesUtil.read("config", "protocol");
-		ip = ReadPropertiesUtil.read("config", "ip");
-		port = ReadPropertiesUtil.read("config", "port");
+	public CommentService(Context context){
+		propUtil = new PropertiesUtil(context);
+		spUtil = new SharedPreferencesUtil(context);
+		protocol = spUtil.getProtocol();
+		ip = spUtil.getIp();
+		port = spUtil.getPort();
 	}
 	
 	public String getComments(String belong, String newsid, String offset, String length){
@@ -33,14 +45,14 @@ public class CommentService {
 		params.put("newsid", newsid);
 		params.put("offset", offset);
 		params.put("length", length);
-		return HttpUtil.doPost(params, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "getComments"));
+		return HttpUtil.doPost(params, protocol + ip + ":" + port + propUtil.readProperties("link.properties", "getComments"));
 	}
 	
 	public String getCommentById(String token, String id, String userid){
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("id", id);
 		params.put("userid", userid);
-		return HttpUtil.doPost(params, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "getCommentById") + token);
+		return HttpUtil.doPost(params, protocol + ip + ":" + port + propUtil.readProperties("link.properties", "getCommentById") + token);
 	}
 	
 	public List<CommentWithUser> parseCommentsJson(String json){
@@ -102,7 +114,7 @@ public class CommentService {
 		params.put("newsid", newsid);
 		params.put("userid", userid);
 		params.put("content", content);
-		return HttpUtil.doPost(params, protocol + ip + ":" + port + ReadPropertiesUtil.read("link", "addComment") + token);
+		return HttpUtil.doPost(params, protocol + ip + ":" + port + propUtil.readProperties("link.properties", "addComment") + token);
 	}
 	
 	public CommentWithUser parseCommentJson(String json){
@@ -130,6 +142,27 @@ public class CommentService {
 			e.printStackTrace();
 		}
 		return cwu;
+	}
+	
+	/**
+	 * store image
+	 * @param bitmap
+	 * @param filename
+	 */
+	public void storeImage(Bitmap bitmap, String filename){
+		try {
+			File filepath = new File(propUtil.readProperties("config.properties", "userinfo_path"));
+			if (!filepath.exists()) {
+				filepath.mkdirs();
+			}
+			FileOutputStream fileOS = new FileOutputStream(filepath + "/" + filename);
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOS);
+			fileOS.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

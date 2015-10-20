@@ -72,22 +72,22 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/main_viewpager_title_rel_diy"
+        android:id="@+id/main_viewpager_title_rel_video"
         android:layout_width="0dp"
         android:layout_height="35dp"
         android:layout_weight="1" >
 
         <TextView
-            android:id="@+id/main_viewpager_title_tv_diy"
+            android:id="@+id/main_viewpager_title_tv_video"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="DIY"
+            android:text="视频"
             android:textColor="@color/common_grey_color"
             android:textSize="15sp" />
 
         <ImageView
-            android:id="@+id/main_viewpager_title_iv_diy"
+            android:id="@+id/main_viewpager_title_iv_video"
             android:layout_width="match_parent"
             android:layout_height="2.5dp"
             android:layout_alignParentBottom="true" />

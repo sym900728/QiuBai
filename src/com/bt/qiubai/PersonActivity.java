@@ -48,11 +48,11 @@ public class PersonActivity extends Activity implements OnClickListener, OnTouch
 		person_dialog_icon_photo_iv_selector, person_dialog_icon_pic_iv_selector,
 		person_iv_icon;
 	private EditText person_dialog_nickname_et, person_dialog_password_origin_et, person_dialog_password_new_et, person_dialog_password_repeat_et;
-	private TextView person_tv_nickname;
+	private TextView person_tv_account, person_tv_nickname;
 	
 	private Dialog personNicknameDialog, personPasswordDialog, personIconDialog;
 	private GestureDetector gestureDetector;
-	private UserService userService = new UserService();
+	private UserService userService;
 	private SharedPreferencesUtil spUtil = new SharedPreferencesUtil(PersonActivity.this);
 	
 	private final static int PERSON_CHANGE_NICKNAME_SUCCESS = 1;
@@ -74,9 +74,13 @@ public class PersonActivity extends Activity implements OnClickListener, OnTouch
 		setContentView(R.layout.person_activity);
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.person_title);
 		
+		userService = new UserService(PersonActivity.this);
+		
 		person_scroll = (ScrollView) findViewById(R.id.person_scroll);
 		gestureDetector = new GestureDetector(PersonActivity.this,onGestureListener);
 		person_scroll.setOnTouchListener(this);
+		person_tv_account = (TextView) findViewById(R.id.person_tv_account);
+		person_tv_account.setText(spUtil.getUserid());
 		person_tv_nickname = (TextView) findViewById(R.id.person_tv_nickname);
 		person_tv_nickname.setText(spUtil.getNickname());
 		person_iv_icon = (ImageView) findViewById(R.id.person_iv_icon);
@@ -330,9 +334,12 @@ public class PersonActivity extends Activity implements OnClickListener, OnTouch
 		case PERSON_REQUEST_CODE_CAMERA:
 			if(resultCode == RESULT_OK){
 				if(data != null){
+					//System.out.println(data);
 					startPhotoZoom(data.getData());
 				}
-			} else if (resultCode == RESULT_CANCELED){}
+			} else if (resultCode == RESULT_CANCELED){
+				//System.out.println("cancel");
+			}
 			break;
 		case PERSON_REQUEST_CODE_CROP:
 			if(resultCode == RESULT_OK){

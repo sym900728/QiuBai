@@ -42,7 +42,7 @@ public class RegisterActivity extends Activity implements OnClickListener, OnFoc
 	private ScrollView register_scroll;
 	
 	private GestureDetector gestureDetector;
-	private UserService userService = new UserService();
+	private UserService userService;
 	
 	private Dialog progressDialog;
 	private Animation anim_rotate;
@@ -58,6 +58,8 @@ public class RegisterActivity extends Activity implements OnClickListener, OnFoc
 		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.register_activity);
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.register_title);
+		
+		userService = new UserService(RegisterActivity.this);
 		
 		if(!NetworkUtil.isConnectInternet(this)){
 			Toast.makeText(this, "您没有连接网络，请连接网络", Toast.LENGTH_SHORT).show();

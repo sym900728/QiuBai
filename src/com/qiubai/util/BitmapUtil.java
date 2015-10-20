@@ -34,6 +34,7 @@ public class BitmapUtil {
 		matrix.postScale(scale, scale);
 		Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 		Bitmap alterBitmap = Bitmap.createBitmap(newBitmap, 0, 0, boxWidth, boxHeight);
+		newBitmap = null;
 		return alterBitmap;
 	}
 
@@ -149,7 +150,7 @@ public class BitmapUtil {
         canvas.drawARGB(0, 0, 0, 0);  
         canvas.drawCircle(bitmap.getWidth() / 2,  bitmap.getHeight() / 2, bitmap.getWidth() / 2, paint);  
         paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));  
-        canvas.drawBitmap(bitmap, rect, rect, paint);  
+        canvas.drawBitmap(bitmap, rect, rect, paint);
         return output; 
 	}
 }

@@ -15,6 +15,95 @@ public class SharedPreferencesUtil {
 		this.context = context;
 	}
 	
+	public boolean storeRefreshTime(String key, long value){
+		sharedPreferences = context.getSharedPreferences(QIUBAIXML, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putLong(key, value);
+		return editor.commit();
+	}
+	
+	public long getRefreshTime(String key){
+		sharedPreferences = context.getSharedPreferences(QIUBAIXML, Context.MODE_PRIVATE);
+		return sharedPreferences.getLong(key, 0);
+	}
+	
+	public boolean isFirstRun(String flag){
+		sharedPreferences = context.getSharedPreferences(QIUBAIXML, Context.MODE_PRIVATE);
+		String str = sharedPreferences.getString(flag, null);
+		if(str == null){
+			storefirstRun(flag);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean storefirstRun(String flag){
+		sharedPreferences = context.getSharedPreferences(QIUBAIXML, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString(flag, "no");
+		return editor.commit();
+	}
+	
+	public String getProtocol(){
+		sharedPreferences = context.getSharedPreferences(QIUBAIXML, Context.MODE_PRIVATE);
+		String protocol = sharedPreferences.getString("protocol", null);
+		if(protocol == null || "".equals(protocol)){
+			return "http://";
+		}
+		return protocol;
+	}
+	
+	/**
+	 * store ip
+	 * @param ip
+	 * @return
+	 */
+	public boolean storeIp(String ip){
+		sharedPreferences = context.getSharedPreferences(QIUBAIXML, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString("ip", ip);
+		return editor.commit();
+	}
+	
+	/**
+	 * get ip
+	 * @return
+	 */
+	public String getIp(){
+		sharedPreferences = context.getSharedPreferences(QIUBAIXML, Context.MODE_PRIVATE);
+		String ip = sharedPreferences.getString("ip", null);
+		if(ip == null || "".equals(ip)){
+			return "192.168.31.129";
+		}
+		return ip;
+	}
+	
+	/**
+	 * store port
+	 * @param port
+	 * @return
+	 */
+	public boolean storePort(String port){
+		sharedPreferences = context.getSharedPreferences(QIUBAIXML, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString("port", port);
+		return editor.commit();
+	}
+	
+	/**
+	 * get port
+	 * @return
+	 */
+	public String getPort(){
+		sharedPreferences = context.getSharedPreferences(QIUBAIXML, Context.MODE_PRIVATE);
+		String port = sharedPreferences.getString("port", null);
+		if(port == null || "".equals(port)){
+			return "8080";
+		}
+		return port;
+	}
+	
 	/**
 	 * store token
 	 * @param token

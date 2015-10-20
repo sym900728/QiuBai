@@ -71,7 +71,7 @@
             android:paddingRight="20dp" >
 
             <TextView
-                android:id="@+id/comment_listview_item_iv_content"
+                android:id="@+id/comment_listview_item_tv_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/comment_listview_item_content_color"
